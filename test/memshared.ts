@@ -29,7 +29,9 @@ describe("memshared", () => {
         describe("basic", () => {
             describe("#get", () => {
                 it("get", () => {
-                    assert.isTrue(true);
+                    commands.get("number", (result) => {
+                        assert.equal(result, 1);
+                    });
                 });
             });
 
@@ -44,10 +46,6 @@ describe("memshared", () => {
 
             describe("#delete", () => {
                 it("delete", (done) => {
-                    commands.get("number", (result) => {
-                        assert.equal(result, 1);
-                    });
-
                     commands.del("number", (result) => {
                         assert.equal(result, "OK");
 
