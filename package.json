@@ -1,0 +1,21 @@
+{
+  "name": "memshared",
+  "version": "1.0.0",
+  "description": "In-memory shared cache for NodeJS clustered applications.",
+  "main": "index.js",
+  "repository": "https://github.com/endel/memshared",
+  "author": "Endel Dreyer",
+  "license": "MIT",
+  "scripts": {
+    "test": "mocha --require ts-node/register test/*.ts"
+  },
+  "devDependencies": {
+    "@types/chai": "^3.5.2",
+    "@types/mocha": "^2.2.41",
+    "@types/node": "^7.0.14",
+    "chai": "^3.5.0",
+    "mocha": "^3.3.0",
+    "ts-node": "^3.0.2",
+    "typescript": "^2.3.2"
+  }
+}
