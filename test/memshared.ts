@@ -20,7 +20,7 @@ describe("memshared", () => {
 
         it("all tests", (done) => {
             worker.on("exit", () => done());
-        });
+        }).timeout(5000);
 
     } else {
         // Exit worker on completion
