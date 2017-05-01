@@ -1,10 +1,17 @@
-import { Message, buildMessage } from "./protocol";
+export interface Message {
+    messageId: string,
+    cmd: string,
+    args?: any[],
+    result?: any,
+};
+
+let messageId: number = 0;
 
 export class Store {
     private $callbacks: {[messageId: string]: Function} = {};
 
     dispatch (cmd: string, callback: Function, ...args: any[]) {
-        let msg = buildMessage(cmd, ...args);
+        let msg = this._buildMessage(cmd, ...args);
 
         // callback when the worker receives back the final result
         this.$callbacks[msg.messageId] = callback;
@@ -19,5 +26,13 @@ export class Store {
 
         // cleanup
         delete this.$callbacks[ message.messageId ];
+    }
+
+    private _buildMessage(command: string, ...args: any[]): Message {
+        return {
+            messageId: `${ process.pid }:${ messageId++ }`,
+            cmd: command,
+            args: args
+        }
     }
 }

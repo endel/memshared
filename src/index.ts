@@ -1,8 +1,7 @@
 import * as cluster from "cluster";
 import * as commands from "./commands";
 
-import { Store } from "./Store";
-import { Message } from "./protocol";
+import { Store, Message } from "./Store";
 
 export const store = new Store();
 
