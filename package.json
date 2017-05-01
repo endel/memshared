@@ -1,7 +1,7 @@
 {
   "name": "memshared",
   "version": "1.0.0",
-  "description": "In-memory shared cache for NodeJS clustered applications.",
+  "description": "Redis-like in-memory shared cache for NodeJS clustered applications",
   "main": "index.js",
   "repository": "https://github.com/endel/memshared",
   "author": "Endel Dreyer",
