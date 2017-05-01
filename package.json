@@ -1,13 +1,15 @@
 {
   "name": "memshared",
-  "version": "1.0.0",
-  "description": "Redis-like in-memory shared cache for NodeJS clustered applications",
-  "main": "index.js",
+  "version": "0.1.0",
+  "description": "Redis-like in-memory database for NodeJS clustered applications",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
   "repository": "https://github.com/endel/memshared",
   "author": "Endel Dreyer",
   "license": "MIT",
   "scripts": {
-    "test": "mocha --require ts-node/register test/*.ts"
+    "test": "mocha --require ts-node/register test/*.ts",
+    "prepublish": "tsc -d"
   },
   "devDependencies": {
     "@types/chai": "^3.5.2",

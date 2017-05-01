@@ -1,6 +1,6 @@
 # memshared
 
-Redis-like in-memory shared cache for NodeJS clustered applications.
+Redis-like in-memory database for NodeJS clustered applications.
 
 ## License
 
