@@ -3,6 +3,7 @@ export interface Message {
     cmd: string,
     args?: any[],
     result?: any,
+    error?: any,
 };
 
 let messageId: number = 0;
@@ -22,7 +23,7 @@ export class Store {
 
     consume (message: Message) {
         // dispatch callback
-        this.$callbacks[ message.messageId ]( message.result );
+        this.$callbacks[ message.messageId ]( message.error, message.result );
 
         // cleanup
         delete this.$callbacks[ message.messageId ];

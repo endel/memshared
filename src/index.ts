@@ -11,7 +11,12 @@ function masterHandleIncomingMessage (workerId: number, message: Message) {
     if (!message || !commands[message.cmd]) { return; }
 
     // run command in master
-    message.result = commands[message.cmd].apply(undefined, message.args);
+    try {
+        message.result = commands[message.cmd].apply(undefined, message.args);
+
+    } catch (e) {
+        message.error = e.message;
+    }
 
     // delete irrelevant data to send back to the worker
     delete message['args'];

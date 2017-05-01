@@ -20,7 +20,7 @@ describe("memshared", () => {
 
         it("all tests", (done) => {
             worker.on("exit", () => done());
-        }).timeout(5000);
+        }).timeout(5000);;
 
     } else {
         // Exit worker on completion
@@ -29,7 +29,7 @@ describe("memshared", () => {
         describe("basic", () => {
             describe("#get", () => {
                 it("get", () => {
-                    commands.get("number", (result) => {
+                    commands.get("number", (err, result) => {
                         assert.equal(result, 1);
                     });
                 });
@@ -37,7 +37,7 @@ describe("memshared", () => {
 
             describe("#set", () => {
                 it("set", (done) => {
-                    commands.set("key", "value", function(result) {
+                    commands.set("key", "value", function(err, result) {
                         assert.equal(result, "OK");
                         done();
                     })
@@ -46,10 +46,10 @@ describe("memshared", () => {
 
             describe("#delete", () => {
                 it("delete", (done) => {
-                    commands.del("number", (result) => {
+                    commands.del("number", (err, result) => {
                         assert.equal(result, "OK");
 
-                        commands.get("number", (result) => {
+                        commands.get("number", (err, result) => {
                             assert.equal(undefined, result);
                             done();
                         });

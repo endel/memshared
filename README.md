@@ -11,6 +11,32 @@ If you want to help, [pick one command that is not
 implemented](https://github.com/endel/memshared/tree/master/src/commands) and
 feel free to submit a pull-request.
 
+## Usage
+
+```typescript
+import * as cluster from "cluster";
+import * as memshared from "memshared";
+
+if (cluster.isMaster) {
+  memshared.setup({
+    // setup your initial data
+  });
+
+  cluster.fork();
+
+} else {
+  memshared.set('foo', 'bar');
+
+  memshared.get('foo', function (err, result) {
+    console.log(result);
+  });
+
+  memshared.del('key');
+
+  memshared.sadd('set', 1, 3, 5, 7);
+}
+```
+
 ## License
 
 MIT
