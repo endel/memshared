@@ -20,7 +20,7 @@ export function get (key: string, callback: Function) {
  */
 export function set (key: string, value: any, callback: Function) {
     if (cluster.isWorker) {
-        store.dispatch("set", callback, key);
+        store.dispatch("set", callback, key, value);
 
     } else {
         store[key] = value;

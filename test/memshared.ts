@@ -39,8 +39,11 @@ describe("memshared", () => {
                 it("set", (done) => {
                     commands.set("key", "value", function(err, result) {
                         assert.equal(result, "OK");
-                        done();
-                    })
+                        commands.get("key", (err, result) => {
+                            assert.equal(result, "value");
+                            done();
+                        });
+                    });
                 });
             });
 
