@@ -1,10 +1,3 @@
-export enum DataType {
-    HASH,
-    LIST,
-    SET,
-    STRING,
-}
-
 export * from "./key";
 export * from "./string";
 export * from "./hash";
