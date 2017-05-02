@@ -177,7 +177,20 @@ export function hstrlen () {
  * HVALS key
  * Get all the values in a hash
  */
-export function hvals () {
+export function hvals (key: string, callback: Function) {
+    if (cluster.isWorker) {
+        store.dispatch("hvals", callback, key);
+
+    } else {
+        let result = [];
+        let target = store[key] || {};
+
+        for (let k in target) {
+            result.push(target[k]);
+        }
+
+        return result;
+    }
 }
 
 /*

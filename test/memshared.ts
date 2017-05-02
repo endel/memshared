@@ -157,6 +157,22 @@ describe("memshared", () => {
                 });
             });
 
+            describe("#hvals", () => {
+                it("should return empty for non-existing keys", (done) => {
+                    commands.hvals("non-existing-hkeys", (err, result) => {
+                        assert.deepEqual(result, []);
+                        done();
+                    });
+                });
+
+                it("should return array of values for valid object", (done) => {
+                    commands.hvals("hash", (err, result) => {
+                        assert.deepEqual(result, [1, 2, 3]);
+                        done();
+                    });
+                });
+            });
+
             describe("#hlen", () => {
                 it("should return 0 for non-existing keys", (done) => {
                     commands.hlen("non-existing-hlen", (err, result) => {
