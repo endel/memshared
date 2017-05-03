@@ -67,14 +67,33 @@ export function bitpos () {
  * DECR key
  * Decrement the integer value of a key by one
  */
-export function decr () {
+export function decr (key: string, callback: Function) {
+    if (cluster.isWorker) {
+        store.dispatch("decr", callback, key);
+
+    } else {
+        if (!store[key]) {
+            store[key] = 0;
+        }
+        return (--store[key]);
+    }
 }
 
 /*
  * DECRBY key decrement
  * Decrement the integer value of a key by the given number
  */
-export function decrby () {
+export function decrby (key: string, value: number, callback: Function) {
+    if (cluster.isWorker) {
+        store.dispatch("decrby", callback, key, value);
+
+    } else {
+        if (!store[key]) {
+            store[key] = 0;
+        }
+        store[key] -= value;
+        return store[key];
+    }
 }
 
 /*
@@ -102,14 +121,33 @@ export function getset () {
  * INCR key
  * Increment the integer value of a key by one
  */
-export function incr () {
+export function incr (key: string, callback: Function) {
+    if (cluster.isWorker) {
+        store.dispatch("incr", callback, key);
+
+    } else {
+        if (!store[key]) {
+            store[key] = 0;
+        }
+        return ++store[key];
+    }
 }
 
 /*
  * INCRBY key increment
  * Increment the integer value of a key by the given amount
  */
-export function incrby () {
+export function incrby (key: string, value: number, callback: Function) {
+    if (cluster.isWorker) {
+        store.dispatch("incrby", callback, key, value);
+
+    } else {
+        if (!store[key]) {
+            store[key] = 0;
+        }
+        store[key] += value;
+        return store[key];
+    }
 }
 
 /*
@@ -179,6 +217,12 @@ export function setrange () {
  * STRLEN key
  * Get the length of the value stored in a key
  */
-export function strlen () {
+export function strlen (key: string, callback: Function) {
+    if (cluster.isWorker) {
+        store.dispatch("strlen", callback, key);
+
+    } else {
+        return (store[key] || "").length;
+    }
 }
 

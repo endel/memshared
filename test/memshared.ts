@@ -12,6 +12,10 @@ describe("memshared", () => {
         it("should set up with initial data", () => {
             setup({
                 number: 1,
+                number_decr: 5,
+                number_decrby: 5,
+                number_incr: 5,
+                number_incrby: 5,
                 string: "Hello world!",
                 hash: { one: 1, two: 2, three: 3 },
                 mutateme: { one: 1, two: 2, three: 3 },
@@ -28,6 +32,9 @@ describe("memshared", () => {
         // Exit worker on completion
         after(() => process.exit());
 
+        //
+        // String
+        //
         describe("basic", () => {
             describe("#get", () => {
                 it("get", () => {
@@ -39,7 +46,7 @@ describe("memshared", () => {
 
             describe("#set", () => {
                 it("set", (done) => {
-                    commands.set("key", "value", function(err, result) {
+                    commands.set("key", "value", (err, result) => {
                         assert.equal(result, "OK");
                         commands.get("key", (err, result) => {
                             assert.equal(result, "value");
@@ -49,6 +56,115 @@ describe("memshared", () => {
                 });
             });
 
+            describe("#decr", () => {
+                it("should decrease non-existing key", (done) => {
+                    commands.decr("decr-non-existing", (err, result) => {
+                        assert.equal(result, -1);
+                        commands.get("decr-non-existing", (err, result) => {
+                            assert.equal(result, -1);
+                            done();
+                        });
+                    });
+                });
+
+                it("should decrease existing key", (done) => {
+                    commands.decr("number_decr", (err, result) => {
+                        assert.equal(result, 4);
+                        commands.get("number_decr", (err, result) => {
+                            assert.equal(result, 4);
+                            done();
+                        });
+                    });
+                });
+            });
+
+            describe("#decrby", () => {
+                it("should decrease non-existing key", (done) => {
+                    commands.decrby("decrby-non-existing", 3, (err, result) => {
+                        assert.equal(result, -3);
+                        commands.get("decrby-non-existing", (err, result) => {
+                            assert.equal(result, -3);
+                            done();
+                        });
+                    });
+                });
+
+                it("should decrease existing key", (done) => {
+                    commands.decrby("number_decrby", 3, (err, result) => {
+                        assert.equal(result, 2);
+                        commands.get("number_decrby", (err, result) => {
+                            assert.equal(result, 2); done();
+                        });
+                    });
+                });
+            });
+
+
+            describe("#incr", () => {
+                it("should increase non-existing key", (done) => {
+                    commands.incr("incr-non-existing", (err, result) => {
+                        assert.equal(result, 1);
+                        commands.get("incr-non-existing", (err, result) => {
+                            assert.equal(result, 1);
+                            done();
+                        });
+                    });
+                });
+
+                it("should increase existing key", (done) => {
+                    commands.incr("number_incr", (err, result) => {
+                        assert.equal(result, 6);
+                        commands.get("number_incr", (err, result) => {
+                            assert.equal(result, 6);
+                            done();
+                        });
+                    });
+                });
+            });
+
+            describe("#incrby", () => {
+                it("should increase non-existing key", (done) => {
+                    commands.incrby("incrby-non-existing", 3, (err, result) => {
+                        assert.equal(result, 3);
+                        commands.get("incrby-non-existing", (err, result) => {
+                            assert.equal(result, 3);
+                            done();
+                        });
+                    });
+                });
+
+                it("should increase existing key", (done) => {
+                    commands.incrby("number_incrby", 3, (err, result) => {
+                        assert.equal(result, 8);
+                        commands.get("number_incrby", (err, result) => {
+                            assert.equal(result, 8); done();
+                        });
+                    });
+                });
+            });
+
+            describe("#strlen", () => {
+                it("should return 0 for non-existing key", (done) => {
+                    commands.strlen("strlen-non-existing", (err, result) => {
+                        assert.equal(result, 0);
+                        done();
+                    });
+                });
+
+                it("should return string length for existing key", (done) => {
+                    commands.strlen("string", (err, result) => {
+                        assert.equal(result, 12);
+                        done();
+                    });
+                });
+            });
+
+        });
+
+        //
+        // Key
+        //
+        describe("key", () => {
             describe("#delete", () => {
                 it("delete", (done) => {
                     commands.del("number", (err, result) => {
@@ -62,7 +178,6 @@ describe("memshared", () => {
                     assert.isTrue(true);
                 });
             });
-
         });
 
         //
