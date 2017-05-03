@@ -14,12 +14,10 @@ export function sadd (key: string, member: any, callback: Function) {
         store.dispatch("sadd", callback, key, member);
 
     } else {
-        if (!Array.isArray(store[key])) {
-            store[key] = [];
+        if (!(store[key] instanceof Set)) {
+            store[key] = new Set();
         }
-
-        store[key].push(member);
-
+        store[key].add(member);
         return true;
     }
 }
@@ -33,10 +31,10 @@ export function scard (key: string, callback: Function) {
         store.dispatch("scard", callback, key);
 
     } else {
-        if (!Array.isArray(store[key])) {
+        if (!(store[key] instanceof Set)) {
             notASetError(key);
         }
-        return store[key].length;
+        return store[key].size;
     }
 }
 
@@ -77,10 +75,10 @@ export function sismember (key: string, member: any, callback: Function) {
         store.dispatch("sismember", callback, key, member);
 
     } else {
-        if (!Array.isArray(store[key])) {
+        if (!(store[key] instanceof Set)) {
             notASetError(key);
         }
-        return store[key].indexOf(member) >= 0;
+        return store[key].has(member);
     }
 }
 
@@ -93,9 +91,9 @@ export function smembers (key: string, callback: Function) {
         store.dispatch("smembers", callback, key);
 
     } else {
-        return (!Array.isArray(store[key]))
+        return (!(store[key] instanceof Set))
             ? []
-            : store[key];
+            : Array.from(store[key].values());
     }
 }
 
@@ -110,15 +108,7 @@ export function smove () {
  * SPOP key [count]
  * Remove and return one or multiple random members from a set
  */
-export function spop (key: string, callback: Function) {
-    if (cluster.isWorker) {
-        store.dispatch("spop", callback, key);
-
-    } else {
-        return (!Array.isArray(store[key]))
-            ? null
-            : store[key].pop();
-    }
+export function spop () {
 }
 
 /*
@@ -137,15 +127,9 @@ export function srem (key: string, member: any, callback: Function) {
         store.dispatch("srem", callback, key, member);
 
     } else {
-        let s = (store[key] || []);
-        let index = s.indexOf(member);
-        let found = (index !== -1);
-
-        if (found) {
-            s.splice(index, 1);
-        }
-
-        return found;
+        return (!(store[key] instanceof Set))
+            ? false
+            : store[key].delete(member);
     }
 }
 
