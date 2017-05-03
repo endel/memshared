@@ -20,7 +20,8 @@ describe("memshared", () => {
                 hash: { one: 1, two: 2, three: 3 },
                 mutateme: { one: 1, two: 2, three: 3 },
                 deleteme: { one: 1, two: 2, three: 3 },
-                list: [ 9, 8, 7, 6, 5, 4, 3, 2, 1 ]
+                list: [ 9, 8, 7, 6, 5, 4, 3, 2, 1 ],
+                list_pop: [ 9, 8, 7, 6, 5, 4, 3, 2, 1 ]
             });
         });
 
@@ -175,7 +176,6 @@ describe("memshared", () => {
                             done();
                         });
                     });
-                    assert.isTrue(true);
                 });
             });
         });
@@ -316,6 +316,99 @@ describe("memshared", () => {
                 });
             });
 
+        });
+
+        //
+        // Set
+        //
+        describe("set", () => {
+            describe("#sadd", () => {
+                it("should add item to set", (done) => {
+                    commands.sadd("set", "element", (err, result) => {
+                        assert.equal(result, true);
+                        commands.sismember("set", "element", (err, result) => {
+                            assert.equal(result, true);
+                            done();
+                        });
+                    });
+                });
+            });
+
+            describe("#scard", () => {
+                it("should get number of elements on set", (done) => {
+                    commands.scard("list", (err, result) => {
+                        assert.equal(result, 9);
+                        done();
+                    });
+                });
+            });
+
+            describe("#sismember", () => {
+                it("should return true if member is found", (done) => {
+                    commands.sismember("list", 1, (err, result) => {
+                        assert.equal(result, true);
+                        done();
+                    });
+                });
+
+                it("should return false if member couldn't be found", (done) => {
+                    commands.sismember("list", 20, (err, result) => {
+                        assert.equal(result, false);
+                        done();
+                    });
+                });
+            });
+
+            describe("#smembers", () => {
+                it("should return empty for non-existing keys", (done) => {
+                    commands.smembers("smembers-non-existing-key", (err, result) => {
+                        assert.deepEqual(result, []);
+                        done();
+                    });
+                });
+
+                it("should return all elements for valid key", (done) => {
+                    commands.smembers("list", (err, result) => {
+                        assert.deepEqual(result, [ 9, 8, 7, 6, 5, 4, 3, 2, 1 ]);
+                        done();
+                    });
+                });
+
+            });
+
+            describe("#spop", () => {
+                it("should return null for non-existing keys", (done) => {
+                    commands.spop("smembers-non-existing-key", (err, result) => {
+                        assert.equal(result, null);
+                        done();
+                    });
+                });
+
+                it("should return last value for valid keys", (done) => {
+                    commands.spop("list_pop", (err, result) => {
+                        assert.equal(result, 1);
+                        done();
+                    });
+                });
+
+            });
+
+            describe("#srem", () => {
+                it("should return false for non-existing keys", (done) => {
+                    commands.srem("srem-non-existing-key", "it-doesn't-work-anyway", (err, result) => {
+                        assert.equal(result, false);
+                        done();
+                    });
+                });
+
+                it("should return true if removed successfully", (done) => {
+                    commands.srem("list_pop", 5, (err, result) => {
+                        assert.equal(result, 1);
+                        done();
+                    });
+                });
+
+            });
         });
 
     }

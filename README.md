@@ -31,7 +31,7 @@ if (cluster.isMaster) {
 
   memshared.del('key');
 
-  memshared.sadd('set', 1, 3, 5, 7);
+  memshared.sadd('set', 1);
 }
 ```
 
