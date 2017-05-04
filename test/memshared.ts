@@ -20,6 +20,8 @@ describe("memshared", () => {
                 hash: { one: 1, two: 2, three: 3 },
                 mutateme: { one: 1, two: 2, three: 3 },
                 deleteme: { one: 1, two: 2, three: 3 },
+                deletemetoo: 1,
+                renameme: 1,
                 list: [ 9, 8, 7, 6, 5, 4, 3, 2, 1 ],
                 list_pop: [ 9, 8, 7, 6, 5, 4, 3, 2, 1 ],
                 set: new Set([ 9, 8, 7, 6, 5, 4, 3, 2, 1 ]),
@@ -170,15 +172,98 @@ describe("memshared", () => {
         describe("key", () => {
             describe("#delete", () => {
                 it("delete", (done) => {
-                    commands.del("number", (err, result) => {
+                    commands.del("deletemetoo", (err, result) => {
                         assert.equal(result, "OK");
 
-                        commands.get("number", (err, result) => {
+                        commands.get("deletemetoo", (err, result) => {
                             assert.equal(undefined, result);
                             done();
                         });
                     });
                 });
+            });
+
+            describe("#exists", () => {
+                it("should return false when key doesn't exists", (done) => {
+                    commands.exists("non-existent-key", (err, result) => {
+                        assert.equal(result, false);
+                        done();
+                    });
+                });
+
+                it("should return true if key exists", (done) => {
+                    commands.exists("number", (err, result) => {
+                        assert.equal(result, true);
+                        done();
+                    });
+                });
+            });
+
+            describe("#keys", () => {
+                it("should return empty if couldn't match any key", (done) => {
+                    commands.keys("numberrr*", (err, result) => {
+                        assert.deepEqual(result, []);
+                        done();
+                    });
+                });
+
+                it("should return all matching keys", (done) => {
+                    commands.keys("number*", (err, result) => {
+                        assert.deepEqual(result, ['number', 'number_decr', 'number_decrby', 'number_incr', 'number_incrby']);
+                        done();
+                    });
+                });
+            });
+
+            describe("#rename", () => {
+                it("should throw an error for non-existing keys", (done) => {
+                    commands.rename("rename-non-existing", "renamed", (err, result) => {
+                        assert.isString(err);
+                        done();
+                    });
+                });
+
+                it("should rename key", (done) => {
+                    commands.rename("renameme", "renamed", (err, result) => {
+                        commands.get("renamed", (err, result) => {
+                            assert.equal(result, 1);
+                            done();
+                        });
+                    });
+                });
+            });
+
+            describe("#type", () => {
+                it("should return number type", (done) => {
+                    commands.type("number", (err, result) => {
+                        assert.equal(result, "number");
+                        done();
+                    });
+                });
+
+                it("should return string type", (done) => {
+                    commands.type("string", (err, result) => {
+                        assert.equal(result, "string");
+                        done();
+                    });
+                });
+
+                xit("should return set type", (done) => {
+                    commands.type("set", (err, result) => {
+                        console.log(result);
+                        assert.equal(result, "Set");
+                        done();
+                    });
+                });
+
+                xit("should return list type", (done) => {
+                    commands.type("list", (err, result) => {
+                        console.log(result);
+                        assert.equal(result, "list");
+                        done();
+                    });
+                });
+
             });
         });
 

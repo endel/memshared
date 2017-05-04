@@ -26,7 +26,13 @@ export function dump () {
  * EXISTS key [key ...]
  * Determine if a key exists
  */
-export function exists () {
+export function exists (key: string, callback: Function) {
+    if (cluster.isWorker) {
+        store.dispatch("exists", callback, key);
+
+    } else {
+        return (store[key] !== undefined);
+    }
 }
 
 /**
@@ -47,7 +53,23 @@ export function expireat () {
  * KEYS pattern
  * Find all keys matching the given pattern
  */
-export function keys () {
+export function keys (pattern: string, callback: Function) {
+    if (cluster.isWorker) {
+        store.dispatch("keys", callback, pattern);
+
+    } else {
+        let keys = [];
+        let regexp = new RegExp(pattern.replace("*", ".*"));
+        let allKeys = Object.keys(store)
+
+        for (var i = 0, len = allKeys.length; i < len; i++) {
+            if (regexp.test(allKeys[i])) {
+                keys.push(allKeys[i]);
+            }
+        }
+
+        return keys;
+    }
 }
 
 /**
@@ -110,7 +132,20 @@ export function randomkey () {
  * RENAME key newkey
  * Rename a key
  */
-export function rename () {
+export function rename (key: string, newkey: string, callback: Function) {
+    if (cluster.isWorker) {
+        store.dispatch("rename", callback, key, newkey);
+
+    } else {
+        if (!store[key]) {
+            throw new Error(`no such key '${ key }'`);
+        }
+
+        store[newkey] = store[key];
+        delete store[key];
+
+        return true;
+    }
 }
 
 /**
@@ -152,7 +187,13 @@ export function ttl () {
  * TYPE key
  * Determine the type stored at key
  */
-export function type () {
+export function type (key: string, callback: Function) {
+    if (cluster.isWorker) {
+        store.dispatch("type", callback, key);
+
+    } else {
+        return typeof(store[key]);
+    }
 }
 
 /**
