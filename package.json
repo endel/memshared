@@ -8,7 +8,7 @@
   "author": "Endel Dreyer",
   "license": "MIT",
   "scripts": {
-    "test": "mocha --harmony --require ts-node/register test/*.ts",
+    "test": "mocha --require ts-node/register test/*.ts",
     "prepublish": "tsc -d"
   },
   "devDependencies": {
