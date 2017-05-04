@@ -22,8 +22,14 @@ describe("memshared", () => {
                 deleteme: { one: 1, two: 2, three: 3 },
                 deletemetoo: 1,
                 renameme: 1,
+                mylist: [ "one", "two", "three" ],
                 list: [ 9, 8, 7, 6, 5, 4, 3, 2, 1 ],
                 list_pop: [ 9, 8, 7, 6, 5, 4, 3, 2, 1 ],
+                list_pop_2: [ 1, 2, 3, 4, 5, 6, 7, 8, 9 ],
+                list_pop_3: [ 1, 2, 3, 4, 5, 6, 7, 8, 9 ],
+                list_pop_4: [ 1, 2, 3, 4, 5, 6, 7, 8, 9 ],
+                list_pop_5: [ 1, 2, 3, 4, 5, 6, 7, 8, 9 ],
+                list_pop_6: [ 1, 2, 3, 4, 5, 6, 7, 8, 9 ],
                 set: new Set([ 9, 8, 7, 6, 5, 4, 3, 2, 1 ]),
                 set_pop: new Set([ 9, 8, 7, 6, 5, 4, 3, 2, 1 ]),
             });
@@ -496,6 +502,140 @@ describe("memshared", () => {
                 });
 
             });
+        });
+
+        //
+        // List
+        //
+        describe("list", () => {
+
+            describe("#lindex", () => {
+                it("should return null for non-existing keys", (done) => {
+                    commands.lindex("lindex-non-existing", "value", (err, result) => {
+                        assert.equal(result, null);
+                        done();
+                    });
+                });
+
+                it("should return valid number", (done) => {
+                    commands.lindex("list", 5, (err, result) => {
+                        assert.equal(result, 4);
+                        done();
+                    });
+                });
+            });
+
+            describe("#llen", () => {
+                it("should return 0 for non-existing keys", (done) => {
+                    commands.llen("llen-non-existing", (err, result) => {
+                        assert.equal(result, 0);
+                        done();
+                    });
+                });
+
+                it("should return valid number", (done) => {
+                    commands.llen("list", (err, result) => {
+                        assert.equal(result, 9);
+                        done();
+                    });
+                });
+            });
+
+            describe("#lpop", () => {
+                it("should return null for non-existing keys", (done) => {
+                    commands.lpop("lpop-non-existing", (err, result) => {
+                        assert.equal(result, null);
+                        done();
+                    });
+                });
+
+                it("should return valid number", (done) => {
+                    commands.lpop("list_pop_2", (err, result) => {
+                        assert.equal(result, 1);
+                        done();
+                    });
+                });
+            });
+
+            describe("#rpoplpush", () => {
+                it("should remove first item of source a push into destination", (done) => {
+                    commands.rpoplpush("list_pop_3", "list", (err, result) => {
+                        assert.equal(result, 9);
+                        commands.llen("list", (err, result) => {
+                            assert.equal(result, 10);
+                            done();
+                        });
+                    });
+                });
+            });
+
+            describe("#rpush", () => {
+                it("should push item to list", (done) => {
+                    commands.rpush("list_pop_4", 0, (err, result) => {
+                        assert.equal(result, 10);
+                        commands.rpop("list_pop_4", (err, result) => {
+                            assert.equal(result, 0);
+                            done();
+                        });
+                    });
+                });
+            });
+
+            describe("#rpop", () => {
+                it("should remove and return last item of list", (done) => {
+                    commands.rpop("list_pop_5", (err, result) => {
+                        assert.equal(result, 9);
+                        commands.llen("list_pop_5", (err, result) => {
+                            assert.equal(result, 8);
+                            done();
+                        });
+                    });
+                });
+            });
+
+            describe("#lrange", () => {
+                it("should return empty for non-existing keys", (done) => {
+                    commands.lrange("lrange-non-existing", 0, 10, (err, result) => {
+                        assert.deepEqual(result, []);
+                        done();
+                    });
+                });
+
+                it("should return range of values in a list", (done) => {
+                    commands.lrange("mylist", 0, -1, (err, result) => {
+                        assert.deepEqual(result, ["one", "two"]);
+                        done();
+                    });
+                });
+            });
+
+            describe("#lset", () => {
+                it("should set index of list to value", (done) => {
+                    commands.lset("list_pop_5", 3, "new value!", (err, result) => {
+                        assert.equal(result, "OK");
+
+                        commands.hget("list_pop_5", "3", (err, result) => {
+                            assert.equal(result, "new value!");
+                            done();
+                        });
+                    });
+                });
+            });
+
+            describe("#lpush", () => {
+                it("should insert new element at the beginning of list ", (done) => {
+                    commands.lpush("list_pop_6", 0, (err, result) => {
+                        assert.equal(result, 10);
+
+                        commands.lrange("list_pop_6", 0, 1, (err, result) => {
+                            assert.deepEqual(result, [0]);
+                            done();
+                        });
+                    });
+                });
+            });
+
+
         });
 
     }
