@@ -4,10 +4,17 @@
 
 Redis-like in-memory database for NodeJS clustered applications.
 
-**This project is still under development**. Currently only basic commands are
-implemented. If you would like to help, [pick one command that is not
-implemented yet](https://github.com/endel/memshared/issues)
-and feel free to submit a pull-request!
+## Why?
+
+Adding Redis as a dependency to your application will inevitably add complexity
+to your application / environment. Use this library if you want to keep a simple
+architecture while at the same time allow you to migrate to a real in-memory
+database when you feel the need for it.
+
+## Missing commands
+
+There are a lot of commands missing. Feel free to pick one of them and send a
+pull-request: https://github.com/endel/memshared/issues/7
 
 ## Usage
 
