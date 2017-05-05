@@ -4,5 +4,8 @@
     "module": "commonjs",
     "outDir": "./lib",
     "lib": ["es6"]
-  }
+  },
+  "include": [
+    "src/**/*.ts"
+  ]
 }
