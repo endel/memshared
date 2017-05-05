@@ -469,6 +469,33 @@ describe("memshared", () => {
 
             });
 
+            describe("#srandmember", () => {
+                it("should return distinct values from set", (done) => {
+                    commands.srandmember("set", 2, (err, result) => {
+                      assert.equal(2, result.length);
+                      assert.notEqual(result[0], result[1]);
+                      done();
+                    });
+                });
+
+                it("should return the whole set", (done) => {
+                    commands.srandmember("set", 20, (err, result) => {
+                        assert.notEqual(result[0], result[1]);
+                        commands.scard("set", (err, setSize) => {
+                            assert.equal(result.length, setSize);
+                            done();
+                        });
+                    });
+                });
+
+                it("should return non-distinct values", (done) => {
+                    commands.srandmember("set", -12, (err, result) => {
+                        assert.equal(12, result.length);
+                        done();
+                    });
+                });
+            });
+
             // describe("#spop", () => {
             //     it("should return null for non-existing keys", (done) => {
             //         commands.spop("smembers-non-existing-key", (err, result) => {
@@ -641,4 +668,3 @@ describe("memshared", () => {
     }
 
 });
-

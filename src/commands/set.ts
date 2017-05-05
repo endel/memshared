@@ -115,8 +115,33 @@ export function spop () {
  * SRANDMEMBER key [count]
  * Get one or multiple random members from a set
  */
-export function srandmember () {
-}
+export function srandmember (key: string, count: number=1, callback: Function) {
+    if (cluster.isWorker) {
+        store.dispatch("srandmember", callback, key, count);
+
+    } else {
+        var setLength: number = store[key].size;
+        var returnArr = [];
+        var isPositive: boolean = true ? (count > 0) : false;
+        count = Math.abs(count);
+        var set = Array.from(store[key]);
+        if ((isPositive) && (count >= setLength)) {
+          return set;
+        }
+        var returnedIndexes: Array<number> = [];
+        for(var i = 0; i < count; i++) {
+            var randIndex: number;
+            do {
+              randIndex = Math.floor(Math.random() * setLength);
+            } while((isPositive) && (returnedIndexes.indexOf(randIndex) != -1));
+            returnArr.push(set[randIndex]);
+            if (isPositive) {
+              returnedIndexes.push(randIndex);
+            }
+          }
+          return returnArr;
+        }
+    }
 
 /*
  * SREM key member [member ...]
@@ -153,4 +178,3 @@ export function sunionstore () {
  */
 export function sscan () {
 }
-
