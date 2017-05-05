@@ -192,7 +192,17 @@ export function type (key: string, callback: Function) {
         store.dispatch("type", callback, key);
 
     } else {
-        return typeof(store[key]);
+        let jsType = store[key].constructor.name.toLowerCase();
+
+        // Valid redis types are: 'string', 'list', 'set', 'zset', 'hash'
+        if (jsType === "array") {
+            jsType = "list";
+
+        } else if (jsType === "object") {
+            jsType = "hash";
+        }
+
+        return jsType;
     }
 }
 

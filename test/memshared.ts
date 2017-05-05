@@ -254,18 +254,23 @@ describe("memshared", () => {
                     });
                 });
 
-                xit("should return set type", (done) => {
+                it("should return set type", (done) => {
                     commands.type("set", (err, result) => {
-                        console.log(result);
-                        assert.equal(result, "Set");
+                        assert.equal(result, "set");
                         done();
                     });
                 });
 
-                xit("should return list type", (done) => {
+                it("should return list type", (done) => {
                     commands.type("list", (err, result) => {
-                        console.log(result);
                         assert.equal(result, "list");
+                        done();
+                    });
+                });
+
+                it("should return hash type", (done) => {
+                    commands.type("hash", (err, result) => {
+                        assert.equal(result, "hash");
                         done();
                     });
                 });
