@@ -2,12 +2,13 @@ import * as cluster from "cluster";
 import * as commands from "./commands";
 
 import { Store, Message } from "./Store";
+import { ChildProcess } from "child_process";
 
 export const store = new Store();
 
-let workersById: {[workerId: number]: cluster.Worker} = {};
+let processesById: {[processId: number]: ChildProcess} = {};
 
-function masterHandleIncomingMessage (workerId: number, message: Message) {
+function masterHandleIncomingMessage (processId: number, message: Message) {
     if (!message || !commands[message.cmd]) { return; }
 
     // run command in master
@@ -22,7 +23,7 @@ function masterHandleIncomingMessage (workerId: number, message: Message) {
     delete message['args'];
 
     // send result back to worker
-    workersById[ workerId ].send(message);
+    processesById[ processId ].send(message);
 }
 
 function workerHandleIncomingMessage (message: Message) {
@@ -33,24 +34,23 @@ function workerHandleIncomingMessage (message: Message) {
     store.consume(message);
 }
 
-function addWorker (worker: cluster.Worker) {
-    let pid = worker.process.pid;
-
-    workersById[ pid ] = worker;
-
-    worker.on("message", (message: Message) => masterHandleIncomingMessage(pid, message));
+export function registerProcess (childProcess: ChildProcess) {
+    processesById[ childProcess.pid ] = childProcess;
+    childProcess.on("message", (message: Message) => masterHandleIncomingMessage(childProcess.pid, message));
 }
 
-if (cluster.isMaster) {
+if (!process.send) {
     // Setup existing workers
-    Object.keys(cluster.workers).forEach((workerId) => addWorker(cluster.workers[workerId]));
+    Object.keys(cluster.workers).forEach((workerId) => {
+        registerProcess(cluster.workers[workerId].process);
+    });
 
     // Listen for new workers to setup
-    cluster.on("fork", (worker) => addWorker(worker));
+    cluster.on("fork", (worker) => registerProcess(worker.process));
 
     // Be notified when worker processes die.
     cluster.on('exit', function(worker, code, signal) {
-        delete workersById[ worker.process.pid ];
+        delete processesById[ worker.process.pid ];
     });
 
 } else {
