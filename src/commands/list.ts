@@ -1,5 +1,4 @@
-import * as cluster from "cluster";
-import { store } from "../";
+import { store, isMasterNode } from "../";
 
 /*
  * BLPOP key [key ...] timeout
@@ -27,7 +26,7 @@ export function brpoplpush () {
  * Get an element from a list by its index
  */
 export function lindex (key: string, value: any, callback: Function) {
-    if (cluster.isWorker) {
+    if (!isMasterNode()) {
         store.dispatch("lindex", callback, key, value);
 
     } else {
@@ -49,7 +48,7 @@ export function linsert () {
  * Get the length of a list
  */
 export function llen (key: string, callback: Function) {
-    if (cluster.isWorker) {
+    if (!isMasterNode()) {
         store.dispatch("llen", callback, key);
 
     } else {
@@ -62,7 +61,7 @@ export function llen (key: string, callback: Function) {
  * Remove and get the first element in a list
  */
 export function lpop (key: string, callback: Function) {
-    if (cluster.isWorker) {
+    if (!isMasterNode()) {
         store.dispatch("lpop", callback, key);
 
     } else {
@@ -75,7 +74,7 @@ export function lpop (key: string, callback: Function) {
  * Prepend one or multiple values to a list
  */
 export function lpush (key: string, value: any, callback: Function) {
-    if (cluster.isWorker) {
+    if (!isMasterNode()) {
         store.dispatch("lpush", callback, key, value);
 
     } else {
@@ -95,7 +94,7 @@ export function lpushx () {
  * Get a range of elements from a list
  */
 export function lrange (key: string, start: number, stop: number, callback: Function) {
-    if (cluster.isWorker) {
+    if (!isMasterNode()) {
         store.dispatch("lrange", callback, key, start, stop);
 
     } else {
@@ -115,7 +114,7 @@ export function lrem () {
  * Set the value of an element in a list by its index
  */
 export function lset (key: string, index: number, value: any, callback: Function) {
-    if (cluster.isWorker) {
+    if (!isMasterNode()) {
         store.dispatch("lset", callback, key, index, value);
 
     } else {
@@ -141,7 +140,7 @@ export function ltrim () {
  * Remove and get the last element in a list
  */
 export function rpop (key: string, callback: Function) {
-    if (cluster.isWorker) {
+    if (!isMasterNode()) {
         store.dispatch("rpop", callback, key);
 
     } else {
@@ -154,7 +153,7 @@ export function rpop (key: string, callback: Function) {
  * Remove the last element in a list, prepend it to another list and return it
  */
 export function rpoplpush (source: string, destination: string, callback: Function) {
-    if (cluster.isWorker) {
+    if (!isMasterNode()) {
         store.dispatch("rpoplpush", callback, source, destination);
 
     } else {
@@ -169,7 +168,7 @@ export function rpoplpush (source: string, destination: string, callback: Functi
  * Append one or multiple values to a list
  */
 export function rpush (key: string, value: any, callback: Function) {
-    if (cluster.isWorker) {
+    if (!isMasterNode()) {
         store.dispatch("rpush", callback, key, value);
 
     } else {

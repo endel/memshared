@@ -1,12 +1,11 @@
-import * as cluster from "cluster";
-import { store } from "../";
+import { store, isMasterNode } from "../";
 
 /*
  * GET key
  * Get the value of a key
  */
 export function get (key: string, callback: Function) {
-    if (cluster.isWorker) {
+    if (!isMasterNode()) {
         store.dispatch("get", callback, key);
 
     } else {
@@ -19,7 +18,7 @@ export function get (key: string, callback: Function) {
  * Set the string value of a key
  */
 export function set (key: string, value: any, callback: Function) {
-    if (cluster.isWorker) {
+    if (!isMasterNode()) {
         store.dispatch("set", callback, key, value);
 
     } else {
@@ -68,7 +67,7 @@ export function bitpos () {
  * Decrement the integer value of a key by one
  */
 export function decr (key: string, callback: Function) {
-    if (cluster.isWorker) {
+    if (!isMasterNode()) {
         store.dispatch("decr", callback, key);
 
     } else {
@@ -84,7 +83,7 @@ export function decr (key: string, callback: Function) {
  * Decrement the integer value of a key by the given number
  */
 export function decrby (key: string, value: number, callback: Function) {
-    if (cluster.isWorker) {
+    if (!isMasterNode()) {
         store.dispatch("decrby", callback, key, value);
 
     } else {
@@ -122,7 +121,7 @@ export function getset () {
  * Increment the integer value of a key by one
  */
 export function incr (key: string, callback: Function) {
-    if (cluster.isWorker) {
+    if (!isMasterNode()) {
         store.dispatch("incr", callback, key);
 
     } else {
@@ -138,7 +137,7 @@ export function incr (key: string, callback: Function) {
  * Increment the integer value of a key by the given amount
  */
 export function incrby (key: string, value: number, callback: Function) {
-    if (cluster.isWorker) {
+    if (!isMasterNode()) {
         store.dispatch("incrby", callback, key, value);
 
     } else {
@@ -218,7 +217,7 @@ export function setrange () {
  * Get the length of the value stored in a key
  */
 export function strlen (key: string, callback: Function) {
-    if (cluster.isWorker) {
+    if (!isMasterNode()) {
         store.dispatch("strlen", callback, key);
 
     } else {

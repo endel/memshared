@@ -34,12 +34,7 @@ function workerHandleIncomingMessage (message: Message) {
     store.consume(message);
 }
 
-export function registerProcess (childProcess: ChildProcess) {
-    processesById[ childProcess.pid ] = childProcess;
-    childProcess.on("message", (message: Message) => masterHandleIncomingMessage(childProcess.pid, message));
-}
-
-if (!process.send) {
+if (isMasterNode()) {
     // Setup existing workers
     Object.keys(cluster.workers).forEach((workerId) => {
         registerProcess(cluster.workers[workerId].process);
@@ -55,6 +50,15 @@ if (!process.send) {
 
 } else {
     process.on("message", workerHandleIncomingMessage);
+}
+
+export function isMasterNode () {
+    return (!process.send);
+}
+
+export function registerProcess (childProcess: ChildProcess) {
+    processesById[ childProcess.pid ] = childProcess;
+    childProcess.on("message", (message: Message) => masterHandleIncomingMessage(childProcess.pid, message));
 }
 
 export function setup (data: any) {

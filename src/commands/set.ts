@@ -1,5 +1,4 @@
-import * as cluster from "cluster";
-import { store } from "../";
+import { store, isMasterNode } from "../";
 
 function notASetError(key: string) {
     throw new Error(`'${key}' is not a Set.`)
@@ -10,7 +9,7 @@ function notASetError(key: string) {
  * Add one or more members to a set
  */
 export function sadd (key: string, member: any, callback: Function) {
-    if (cluster.isWorker) {
+    if (!isMasterNode()) {
         store.dispatch("sadd", callback, key, member);
 
     } else {
@@ -27,7 +26,7 @@ export function sadd (key: string, member: any, callback: Function) {
  * Get the number of members in a set
  */
 export function scard (key: string, callback: Function) {
-    if (cluster.isWorker) {
+    if (!isMasterNode()) {
         store.dispatch("scard", callback, key);
 
     } else {
@@ -71,7 +70,7 @@ export function sinterstore () {
  * Determine if a given value is a member of a set
  */
 export function sismember (key: string, member: any, callback: Function) {
-    if (cluster.isWorker) {
+    if (!isMasterNode()) {
         store.dispatch("sismember", callback, key, member);
 
     } else {
@@ -87,7 +86,7 @@ export function sismember (key: string, member: any, callback: Function) {
  * Get all the members in a set
  */
 export function smembers (key: string, callback: Function) {
-    if (cluster.isWorker) {
+    if (!isMasterNode()) {
         store.dispatch("smembers", callback, key);
 
     } else {
@@ -109,7 +108,7 @@ export function smove () {
  * Remove and return one or multiple random members from a set
  */
 export function spop (key: string, count: number = 1, callback: Function) {
-    if (cluster.isWorker) {
+    if (!isMasterNode()) {
         store.dispatch("spop", callback, key, count);
 
     } else {
@@ -128,7 +127,7 @@ export function spop (key: string, count: number = 1, callback: Function) {
  * Get one or multiple random members from a set
  */
 export function srandmember (key: string, count: number=1, callback: Function) {
-    if (cluster.isWorker) {
+    if (!isMasterNode()) {
         store.dispatch("srandmember", callback, key, count);
 
     } else {
@@ -160,7 +159,7 @@ export function srandmember (key: string, count: number=1, callback: Function) {
  * Remove one or more members from a set
  */
 export function srem (key: string, member: any, callback: Function) {
-    if (cluster.isWorker) {
+    if (!isMasterNode()) {
         store.dispatch("srem", callback, key, member);
 
     } else {

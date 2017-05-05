@@ -1,12 +1,11 @@
-import * as cluster from "cluster";
-import { store } from "../";
+import { store, isMasterNode } from "../";
 
 /*
  * HDEL key field [field ...]
  * Delete one or more hash fields
  */
 export function hdel (key: string, field: string, callback: Function) {
-    if (cluster.isWorker) {
+    if (!isMasterNode()) {
         store.dispatch("hdel", callback, key, field);
 
     } else {
@@ -24,7 +23,7 @@ export function hdel (key: string, field: string, callback: Function) {
  * Determine if a hash field exists
  */
 export function hexists (key: string, field: string, callback: Function) {
-    if (cluster.isWorker) {
+    if (!isMasterNode()) {
         store.dispatch("hexists", callback, key, field);
 
     } else {
@@ -37,7 +36,7 @@ export function hexists (key: string, field: string, callback: Function) {
  * Get the value of a hash field
  */
 export function hget (key: string, field: string, callback: Function) {
-    if (cluster.isWorker) {
+    if (!isMasterNode()) {
         store.dispatch("hget", callback, key, field);
 
     } else {
@@ -50,7 +49,7 @@ export function hget (key: string, field: string, callback: Function) {
  * Get all the fields and values in a hash
  */
 export function hgetall (key: string, callback: Function) {
-    if (cluster.isWorker) {
+    if (!isMasterNode()) {
         store.dispatch("hgetall", callback, key);
 
     } else {
@@ -71,7 +70,7 @@ export function hgetall (key: string, callback: Function) {
  * Increment the integer value of a hash field by the given number
  */
 export function hincrby (key: string, field: string, increment: number, callback: Function) {
-    if (cluster.isWorker) {
+    if (!isMasterNode()) {
         store.dispatch("hincrby", callback, key, field, increment);
 
     } else {
@@ -101,7 +100,7 @@ export function hincrbyfloat () {
  * Get all the fields in a hash
  */
 export function hkeys (key: string, callback: Function) {
-    if (cluster.isWorker) {
+    if (!isMasterNode()) {
         store.dispatch("hkeys", callback, key);
 
     } else {
@@ -116,7 +115,7 @@ export function hkeys (key: string, callback: Function) {
  * Get the number of fields in a hash
  */
 export function hlen (key: string, callback: Function) {
-    if (cluster.isWorker) {
+    if (!isMasterNode()) {
         store.dispatch("hlen", callback, key);
 
     } else {
@@ -145,7 +144,7 @@ export function hmset () {
  * Set the string value of a hash field
  */
 export function hset (key: string, field: string, value: any, callback: Function) {
-    if (cluster.isWorker) {
+    if (!isMasterNode()) {
         store.dispatch("hset", callback, key, field, value);
 
     } else {
@@ -178,7 +177,7 @@ export function hstrlen () {
  * Get all the values in a hash
  */
 export function hvals (key: string, callback: Function) {
-    if (cluster.isWorker) {
+    if (!isMasterNode()) {
         store.dispatch("hvals", callback, key);
 
     } else {

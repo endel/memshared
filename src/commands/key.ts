@@ -1,12 +1,11 @@
-import * as cluster from "cluster";
-import { store } from "../";
+import { store, isMasterNode } from "../";
 
 /**
  * DEL key [key ...]
  * Delete a key
  */
 export function del (key: string, callback: Function) {
-    if (cluster.isWorker) {
+    if (!isMasterNode()) {
         store.dispatch("del", callback, key);
 
     } else {
@@ -27,7 +26,7 @@ export function dump () {
  * Determine if a key exists
  */
 export function exists (key: string, callback: Function) {
-    if (cluster.isWorker) {
+    if (!isMasterNode()) {
         store.dispatch("exists", callback, key);
 
     } else {
@@ -54,7 +53,7 @@ export function expireat () {
  * Find all keys matching the given pattern
  */
 export function keys (pattern: string, callback: Function) {
-    if (cluster.isWorker) {
+    if (!isMasterNode()) {
         store.dispatch("keys", callback, pattern);
 
     } else {
@@ -133,7 +132,7 @@ export function randomkey () {
  * Rename a key
  */
 export function rename (key: string, newkey: string, callback: Function) {
-    if (cluster.isWorker) {
+    if (!isMasterNode()) {
         store.dispatch("rename", callback, key, newkey);
 
     } else {
@@ -188,7 +187,7 @@ export function ttl () {
  * Determine the type stored at key
  */
 export function type (key: string, callback: Function) {
-    if (cluster.isWorker) {
+    if (!isMasterNode()) {
         store.dispatch("type", callback, key);
 
     } else {
