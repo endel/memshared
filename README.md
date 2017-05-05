@@ -6,8 +6,8 @@ Redis-like in-memory database for NodeJS clustered applications.
 
 ## Why?
 
-Adding Redis as a dependency to your application will inevitably add complexity
-to your application / environment. Use this library if you want to keep a simple
+Adding Redis as a dependency will inevitably increase the complexity to your
+application and your environment. Use this library if you want to keep a simple
 architecture while at the same time allow you to migrate to a real in-memory
 database when you feel the need for it.
 
