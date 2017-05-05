@@ -108,7 +108,19 @@ export function smove () {
  * SPOP key [count]
  * Remove and return one or multiple random members from a set
  */
-export function spop () {
+export function spop (key: string, count: number = 1, callback: Function) {
+    if (cluster.isWorker) {
+        store.dispatch("spop", callback, key, count);
+
+    } else {
+        let members = srandmember(key, count, undefined);
+
+        for (var i = 0, len = members.length; i < len; i++) {
+            srem(key, members[i], undefined);
+        }
+
+        return members;
+    }
 }
 
 /*

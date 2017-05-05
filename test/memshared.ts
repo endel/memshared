@@ -24,7 +24,6 @@ describe("memshared", () => {
                 renameme: 1,
                 mylist: [ "one", "two", "three" ],
                 list: [ 9, 8, 7, 6, 5, 4, 3, 2, 1 ],
-                list_pop: [ 9, 8, 7, 6, 5, 4, 3, 2, 1 ],
                 list_pop_2: [ 1, 2, 3, 4, 5, 6, 7, 8, 9 ],
                 list_pop_3: [ 1, 2, 3, 4, 5, 6, 7, 8, 9 ],
                 list_pop_4: [ 1, 2, 3, 4, 5, 6, 7, 8, 9 ],
@@ -32,6 +31,7 @@ describe("memshared", () => {
                 list_pop_6: [ 1, 2, 3, 4, 5, 6, 7, 8, 9 ],
                 set: new Set([ 9, 8, 7, 6, 5, 4, 3, 2, 1 ]),
                 set_pop: new Set([ 9, 8, 7, 6, 5, 4, 3, 2, 1 ]),
+                set_pop2: new Set([ 9, 8, 7, 6, 5, 4, 3, 2, 1 ]),
             });
         });
 
@@ -496,22 +496,26 @@ describe("memshared", () => {
                 });
             });
 
-            // describe("#spop", () => {
-            //     it("should return null for non-existing keys", (done) => {
-            //         commands.spop("smembers-non-existing-key", (err, result) => {
-            //             assert.equal(result, null);
-            //             done();
-            //         });
-            //     });
-            //
-            //     it("should return last value for valid keys", (done) => {
-            //         commands.spop("list_pop", (err, result) => {
-            //             assert.equal(result, 1);
-            //             done();
-            //         });
-            //     });
-            //
-            // });
+            describe("#spop", () => {
+                it("should return null for non-existing keys", (done) => {
+                    commands.spop("smembers-non-existing-key", 1, (err, result) => {
+                        assert.equal(result, null);
+                        done();
+                    });
+                });
+
+                it("should return a random value", (done) => {
+                    commands.spop("set_pop2", 1, (err, result) => {
+                        assert.isArray(result);
+                        assert.isTrue([1,2,3,4,5,6,7,8,9].indexOf(result[0]) >= 0);
+                        commands.scard("set_pop2", (err, result) => {
+                            assert.equal(result, 8);
+                            done();
+                        });
+                    });
+                });
+
+            });
 
             describe("#srem", () => {
                 it("should return false for non-existing keys", (done) => {
