@@ -11,11 +11,6 @@ application and your environment. Use this library if you want to keep a simple
 architecture while at the same time allow you to migrate to a real in-memory
 database when you feel the need for it.
 
-## Missing commands
-
-There are a lot of commands missing. Feel free to pick one of them and send a
-pull-request: https://github.com/endel/memshared/issues/7
-
 ## Usage
 
 ```typescript
@@ -41,6 +36,11 @@ if (cluster.isMaster) {
   memshared.sadd('set', 1);
 }
 ```
+
+## Missing commands
+
+There are a lot of commands missing. Feel free to pick one of them and send a
+pull-request: https://github.com/endel/memshared/issues/7
 
 ## License
 
