@@ -1,10 +1,11 @@
 import { store, isMasterNode } from "../";
+import { Callback } from "../callbacks";
 
 /*
  * GET key
  * Get the value of a key
  */
-export function get (key: string, callback: Function) {
+export function get (key: string, callback: Callback<any>) {
     if (!isMasterNode()) {
         store.dispatch("get", callback, key);
 
@@ -17,7 +18,7 @@ export function get (key: string, callback: Function) {
  * SET key value [EX seconds] [PX milliseconds] [NX|XX]
  * Set the string value of a key
  */
-export function set (key: string, value: any, callback: Function) {
+export function set (key: string, value: any, callback: Callback<string>) {
     if (!isMasterNode()) {
         store.dispatch("set", callback, key, value);
 
@@ -66,7 +67,7 @@ export function bitpos () {
  * DECR key
  * Decrement the integer value of a key by one
  */
-export function decr (key: string, callback: Function) {
+export function decr (key: string, callback: Callback<number>) {
     if (!isMasterNode()) {
         store.dispatch("decr", callback, key);
 
@@ -82,7 +83,7 @@ export function decr (key: string, callback: Function) {
  * DECRBY key decrement
  * Decrement the integer value of a key by the given number
  */
-export function decrby (key: string, value: number, callback: Function) {
+export function decrby (key: string, value: number, callback: Callback<number>) {
     if (!isMasterNode()) {
         store.dispatch("decrby", callback, key, value);
 
@@ -120,7 +121,7 @@ export function getset () {
  * INCR key
  * Increment the integer value of a key by one
  */
-export function incr (key: string, callback: Function) {
+export function incr (key: string, callback: Callback<number>) {
     if (!isMasterNode()) {
         store.dispatch("incr", callback, key);
 
@@ -136,7 +137,7 @@ export function incr (key: string, callback: Function) {
  * INCRBY key increment
  * Increment the integer value of a key by the given amount
  */
-export function incrby (key: string, value: number, callback: Function) {
+export function incrby (key: string, value: number, callback: Callback<number>) {
     if (!isMasterNode()) {
         store.dispatch("incrby", callback, key, value);
 
@@ -216,7 +217,7 @@ export function setrange () {
  * STRLEN key
  * Get the length of the value stored in a key
  */
-export function strlen (key: string, callback: Function) {
+export function strlen (key: string, callback: Callback<number>) {
     if (!isMasterNode()) {
         store.dispatch("strlen", callback, key);
 

@@ -1,10 +1,11 @@
 import { store, isMasterNode } from "../";
+import { ArrayCallback, Callback } from "../callbacks";
 
 /**
  * DEL key [key ...]
  * Delete a key
  */
-export function del (key: string, callback: Function) {
+export function del (key: string, callback: Callback<string>) {
     if (!isMasterNode()) {
         store.dispatch("del", callback, key);
 
@@ -25,7 +26,7 @@ export function dump () {
  * EXISTS key [key ...]
  * Determine if a key exists
  */
-export function exists (key: string, callback: Function) {
+export function exists (key: string, callback: Callback<boolean>) {
     if (!isMasterNode()) {
         store.dispatch("exists", callback, key);
 
@@ -52,7 +53,7 @@ export function expireat () {
  * KEYS pattern
  * Find all keys matching the given pattern
  */
-export function keys (pattern: string, callback: Function) {
+export function keys (pattern: string, callback: ArrayCallback<string>) {
     if (!isMasterNode()) {
         store.dispatch("keys", callback, pattern);
 
@@ -131,7 +132,7 @@ export function randomkey () {
  * RENAME key newkey
  * Rename a key
  */
-export function rename (key: string, newkey: string, callback: Function) {
+export function rename (key: string, newkey: string, callback: Callback<boolean>) {
     if (!isMasterNode()) {
         store.dispatch("rename", callback, key, newkey);
 
@@ -186,7 +187,7 @@ export function ttl () {
  * TYPE key
  * Determine the type stored at key
  */
-export function type (key: string, callback: Function) {
+export function type (key: string, callback: Callback<string>) {
     if (!isMasterNode()) {
         store.dispatch("type", callback, key);
 

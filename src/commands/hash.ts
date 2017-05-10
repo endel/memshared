@@ -1,10 +1,11 @@
 import { store, isMasterNode } from "../";
+import { ArrayCallback, Callback } from "../callbacks";
 
 /*
  * HDEL key field [field ...]
  * Delete one or more hash fields
  */
-export function hdel (key: string, field: string, callback: Function) {
+export function hdel (key: string, field: string, callback: Callback<string>) {
     if (!isMasterNode()) {
         store.dispatch("hdel", callback, key, field);
 
@@ -22,7 +23,7 @@ export function hdel (key: string, field: string, callback: Function) {
  * HEXISTS key field
  * Determine if a hash field exists
  */
-export function hexists (key: string, field: string, callback: Function) {
+export function hexists (key: string, field: string, callback: Callback<boolean>) {
     if (!isMasterNode()) {
         store.dispatch("hexists", callback, key, field);
 
@@ -35,7 +36,7 @@ export function hexists (key: string, field: string, callback: Function) {
  * HGET key field
  * Get the value of a hash field
  */
-export function hget (key: string, field: string, callback: Function) {
+export function hget (key: string, field: string, callback: Callback<any>) {
     if (!isMasterNode()) {
         store.dispatch("hget", callback, key, field);
 
@@ -48,7 +49,7 @@ export function hget (key: string, field: string, callback: Function) {
  * HGETALL key
  * Get all the fields and values in a hash
  */
-export function hgetall (key: string, callback: Function) {
+export function hgetall (key: string, callback: ArrayCallback<any>) {
     if (!isMasterNode()) {
         store.dispatch("hgetall", callback, key);
 
@@ -69,7 +70,7 @@ export function hgetall (key: string, callback: Function) {
  * HINCRBY key field increment
  * Increment the integer value of a hash field by the given number
  */
-export function hincrby (key: string, field: string, increment: number, callback: Function) {
+export function hincrby (key: string, field: string, increment: number, callback: Callback<number>) {
     if (!isMasterNode()) {
         store.dispatch("hincrby", callback, key, field, increment);
 
@@ -99,7 +100,7 @@ export function hincrbyfloat () {
  * HKEYS key
  * Get all the fields in a hash
  */
-export function hkeys (key: string, callback: Function) {
+export function hkeys (key: string, callback: ArrayCallback<string>) {
     if (!isMasterNode()) {
         store.dispatch("hkeys", callback, key);
 
@@ -114,7 +115,7 @@ export function hkeys (key: string, callback: Function) {
  * HLEN key
  * Get the number of fields in a hash
  */
-export function hlen (key: string, callback: Function) {
+export function hlen (key: string, callback: Callback<number>) {
     if (!isMasterNode()) {
         store.dispatch("hlen", callback, key);
 
@@ -143,7 +144,7 @@ export function hmset () {
  * HSET key field value
  * Set the string value of a hash field
  */
-export function hset (key: string, field: string, value: any, callback: Function) {
+export function hset (key: string, field: string, value: any, callback: Callback<boolean>) {
     if (!isMasterNode()) {
         store.dispatch("hset", callback, key, field, value);
 
@@ -176,7 +177,7 @@ export function hstrlen () {
  * HVALS key
  * Get all the values in a hash
  */
-export function hvals (key: string, callback: Function) {
+export function hvals (key: string, callback: ArrayCallback<any>) {
     if (!isMasterNode()) {
         store.dispatch("hvals", callback, key);
 

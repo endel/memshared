@@ -1,4 +1,5 @@
 import { store, isMasterNode } from "../";
+import { ArrayCallback, Callback } from "../callbacks";
 
 function notASetError(key: string) {
     throw new Error(`'${key}' is not a Set.`)
@@ -8,7 +9,7 @@ function notASetError(key: string) {
  * SADD key member [member ...]
  * Add one or more members to a set
  */
-export function sadd (key: string, member: any, callback: Function) {
+export function sadd (key: string, member: any, callback: Callback<boolean>) {
     if (!isMasterNode()) {
         store.dispatch("sadd", callback, key, member);
 
@@ -25,7 +26,7 @@ export function sadd (key: string, member: any, callback: Function) {
  * SCARD key
  * Get the number of members in a set
  */
-export function scard (key: string, callback: Function) {
+export function scard (key: string, callback: Callback<number>) {
     if (!isMasterNode()) {
         store.dispatch("scard", callback, key);
 
@@ -69,7 +70,7 @@ export function sinterstore () {
  * SISMEMBER key member
  * Determine if a given value is a member of a set
  */
-export function sismember (key: string, member: any, callback: Function) {
+export function sismember (key: string, member: any, callback: Callback<boolean>) {
     if (!isMasterNode()) {
         store.dispatch("sismember", callback, key, member);
 
@@ -85,7 +86,7 @@ export function sismember (key: string, member: any, callback: Function) {
  * SMEMBERS key
  * Get all the members in a set
  */
-export function smembers (key: string, callback: Function) {
+export function smembers (key: string, callback: ArrayCallback<any>) {
     if (!isMasterNode()) {
         store.dispatch("smembers", callback, key);
 
@@ -107,7 +108,7 @@ export function smove () {
  * SPOP key [count]
  * Remove and return one or multiple random members from a set
  */
-export function spop (key: string, count: number = 1, callback: Function) {
+export function spop (key: string, count: number = 1, callback: Callback<any>) {
     if (!isMasterNode()) {
         store.dispatch("spop", callback, key, count);
 
@@ -126,7 +127,7 @@ export function spop (key: string, count: number = 1, callback: Function) {
  * SRANDMEMBER key [count]
  * Get one or multiple random members from a set
  */
-export function srandmember (key: string, count: number=1, callback: Function) {
+export function srandmember (key: string, count: number=1, callback: Callback<any>) {
     if (!isMasterNode()) {
         store.dispatch("srandmember", callback, key, count);
 
@@ -158,7 +159,7 @@ export function srandmember (key: string, count: number=1, callback: Function) {
  * SREM key member [member ...]
  * Remove one or more members from a set
  */
-export function srem (key: string, member: any, callback: Function) {
+export function srem (key: string, member: any, callback: Callback<boolean>) {
     if (!isMasterNode()) {
         store.dispatch("srem", callback, key, member);
 

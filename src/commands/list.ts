@@ -1,4 +1,5 @@
 import { store, isMasterNode } from "../";
+import { ArrayCallback, Callback } from "../callbacks";
 
 /*
  * BLPOP key [key ...] timeout
@@ -25,7 +26,7 @@ export function brpoplpush () {
  * LINDEX key index
  * Get an element from a list by its index
  */
-export function lindex (key: string, value: any, callback: Function) {
+export function lindex (key: string, value: any, callback: Callback<number>) {
     if (!isMasterNode()) {
         store.dispatch("lindex", callback, key, value);
 
@@ -47,7 +48,7 @@ export function linsert () {
  * LLEN key
  * Get the length of a list
  */
-export function llen (key: string, callback: Function) {
+export function llen (key: string, callback: Callback<number>) {
     if (!isMasterNode()) {
         store.dispatch("llen", callback, key);
 
@@ -60,7 +61,7 @@ export function llen (key: string, callback: Function) {
  * LPOP key
  * Remove and get the first element in a list
  */
-export function lpop (key: string, callback: Function) {
+export function lpop (key: string, callback: Callback<any>) {
     if (!isMasterNode()) {
         store.dispatch("lpop", callback, key);
 
@@ -73,7 +74,7 @@ export function lpop (key: string, callback: Function) {
  * LPUSH key value [value ...]
  * Prepend one or multiple values to a list
  */
-export function lpush (key: string, value: any, callback: Function) {
+export function lpush (key: string, value: any, callback: Callback<number>) {
     if (!isMasterNode()) {
         store.dispatch("lpush", callback, key, value);
 
@@ -93,7 +94,7 @@ export function lpushx () {
  * LRANGE key start stop
  * Get a range of elements from a list
  */
-export function lrange (key: string, start: number, stop: number, callback: Function) {
+export function lrange (key: string, start: number, stop: number, callback: ArrayCallback<any>) {
     if (!isMasterNode()) {
         store.dispatch("lrange", callback, key, start, stop);
 
@@ -113,7 +114,7 @@ export function lrem () {
  * LSET key index value
  * Set the value of an element in a list by its index
  */
-export function lset (key: string, index: number, value: any, callback: Function) {
+export function lset (key: string, index: number, value: any, callback: Callback<string>) {
     if (!isMasterNode()) {
         store.dispatch("lset", callback, key, index, value);
 
@@ -139,7 +140,7 @@ export function ltrim () {
  * RPOP key
  * Remove and get the last element in a list
  */
-export function rpop (key: string, callback: Function) {
+export function rpop (key: string, callback: Callback<any>) {
     if (!isMasterNode()) {
         store.dispatch("rpop", callback, key);
 
@@ -152,7 +153,7 @@ export function rpop (key: string, callback: Function) {
  * RPOPLPUSH source destination
  * Remove the last element in a list, prepend it to another list and return it
  */
-export function rpoplpush (source: string, destination: string, callback: Function) {
+export function rpoplpush (source: string, destination: string, callback: Callback<any>) {
     if (!isMasterNode()) {
         store.dispatch("rpoplpush", callback, source, destination);
 
@@ -167,7 +168,7 @@ export function rpoplpush (source: string, destination: string, callback: Functi
  * RPUSH key value [value ...]
  * Append one or multiple values to a list
  */
-export function rpush (key: string, value: any, callback: Function) {
+export function rpush (key: string, value: any, callback: Callback<number>) {
     if (!isMasterNode()) {
         store.dispatch("rpush", callback, key, value);
 
