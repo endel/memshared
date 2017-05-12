@@ -1,5 +1,5 @@
 import { store, isMasterNode } from "../";
-import { Callback } from "../callbacks";
+import { ArrayCallback, Callback } from "../callbacks";
 
 /*
  * GET key
@@ -161,7 +161,13 @@ export function incrbyfloat () {
  * MGET key [key ...]
  * Get the values of all the given keys
  */
-export function mget () {
+export function mget (keys: string[], callback: ArrayCallback<any>) {
+    if (!isMasterNode()) {
+        store.dispatch("mget", callback, keys);
+
+    } else {
+        return keys.map(k => get(k, undefined));
+    }
 }
 
 /*

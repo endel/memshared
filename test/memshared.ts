@@ -46,7 +46,7 @@ describe("memshared", () => {
         //
         // String
         //
-        describe("basic", () => {
+        describe("string", () => {
             describe("#get", () => {
                 it("get", () => {
                     commands.get("number", (err, result) => {
@@ -165,6 +165,15 @@ describe("memshared", () => {
                 it("should return string length for existing key", (done) => {
                     commands.strlen("string", (err, result) => {
                         assert.equal(result, 12);
+                        done();
+                    });
+                });
+            });
+
+            describe("#mget", () => {
+                it("should get multiple values in one call", (done) => {
+                    commands.mget(["number", "string", "non-existing", "mylist"], (err, result) => {
+                        assert.deepEqual(result, [1, "Hello world!", null, [ "one", "two", "three" ]]);
                         done();
                     });
                 });
