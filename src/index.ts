@@ -56,6 +56,10 @@ export function isMasterNode () {
     return (!process.send);
 }
 
+export function getProcessById(processId: number): ChildProcess {
+    return processesById[ processId ];
+}
+
 export function registerProcess (childProcess: ChildProcess) {
     processesById[ childProcess.pid ] = childProcess;
     childProcess.on("message", (message: Message) => masterHandleIncomingMessage(childProcess.pid, message));
