@@ -99,7 +99,11 @@ export function lrange (key: string, start: number, stop: number, callback: Arra
         store.dispatch("lrange", callback, key, start, stop);
 
     } else {
-        return (store[key] || []).slice(start, stop);
+        let list = (store[key] || []);
+        if (stop === -1) {
+            stop = list.length;
+        }
+        return list.slice(start, stop);
     }
 }
 

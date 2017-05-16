@@ -648,7 +648,7 @@ describe("memshared", () => {
 
                 it("should return range of values in a list", (done) => {
                     commands.lrange("mylist", 0, -1, (err, result) => {
-                        assert.deepEqual(result, ["one", "two"]);
+                        assert.deepEqual(result, ["one", "two", "three"]);
                         done();
                     });
                 });
