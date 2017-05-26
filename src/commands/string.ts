@@ -1,5 +1,6 @@
 import { store, isMasterNode } from "../";
 import { ArrayCallback, Callback } from "../callbacks";
+import { del } from "./key";
 
 /*
  * GET key
@@ -202,7 +203,18 @@ export function setbit () {
  * SETEX key seconds value
  * Set the value and expiration of a key
  */
-export function setex () {
+export function setex (key: string, seconds: number, value: any, callback?: Callback<string>) {
+    if (!isMasterNode()) {
+        store.dispatch("setex", callback, key, seconds, value);
+
+    } else {
+        set(key, value, undefined);
+
+        // enqueue to delete after timeout in seconds.
+        setTimeout(del, seconds * 1000, key);
+
+        return "OK";
+    }
 }
 
 /*

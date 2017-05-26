@@ -67,6 +67,23 @@ describe("memshared", () => {
                 });
             });
 
+            describe("#setex", () => {
+                it("should delete key after timeout", (done) => {
+                    commands.setex("tmpkey", 0.1, "value", (err, result) => {
+                        assert.equal(result, "OK");
+                        commands.get("tmpkey", (err, result) => {
+                            assert.equal(result, "value");
+                            setTimeout(() => {
+                                commands.get("tmpkey", (err, result) => {
+                                    assert.notOk(result);
+                                    done();
+                                });
+                            }, 0.2 * 1000);
+                        });
+                    });
+                });
+            });
+
             describe("#decr", () => {
                 it("should decrease non-existing key", (done) => {
                     commands.decr("decr-non-existing", (err, result) => {
