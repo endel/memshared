@@ -118,7 +118,7 @@ export function lrem () {
  * LSET key index value
  * Set the value of an element in a list by its index
  */
-export function lset (key: string, index: number, value: any, callback: Callback<string>) {
+export function lset (key: string, index: number, value: any, callback?: Callback<string>) {
     if (!isMasterNode()) {
         store.dispatch("lset", callback, key, index, value);
 

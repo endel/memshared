@@ -144,7 +144,7 @@ export function hmset () {
  * HSET key field value
  * Set the string value of a hash field
  */
-export function hset (key: string, field: string, value: any, callback: Callback<boolean>) {
+export function hset (key: string, field: string, value: any, callback?: Callback<boolean>) {
     if (!isMasterNode()) {
         store.dispatch("hset", callback, key, field, value);
 

@@ -9,7 +9,7 @@ function notASetError(key: string) {
  * SADD key member [member ...]
  * Add one or more members to a set
  */
-export function sadd (key: string, member: any, callback: Callback<boolean>) {
+export function sadd (key: string, member: any, callback?: Callback<boolean>) {
     if (!isMasterNode()) {
         store.dispatch("sadd", callback, key, member);
 
@@ -159,7 +159,7 @@ export function srandmember (key: string, count: number=1, callback: Callback<an
  * SREM key member [member ...]
  * Remove one or more members from a set
  */
-export function srem (key: string, member: any, callback: Callback<boolean>) {
+export function srem (key: string, member: any, callback?: Callback<boolean>) {
     if (!isMasterNode()) {
         store.dispatch("srem", callback, key, member);
 

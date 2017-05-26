@@ -18,7 +18,7 @@ export function get (key: string, callback: Callback<any>) {
  * SET key value [EX seconds] [PX milliseconds] [NX|XX]
  * Set the string value of a key
  */
-export function set (key: string, value: any, callback: Callback<string>) {
+export function set (key: string, value: any, callback?: Callback<string>) {
     if (!isMasterNode()) {
         store.dispatch("set", callback, key, value);
 
