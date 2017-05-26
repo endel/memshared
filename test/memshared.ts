@@ -68,6 +68,11 @@ describe("memshared", () => {
             });
 
             describe("#setex", () => {
+                it("shouldn't throw exception without the callback", (done) => {
+                    commands.setex("tmpkey-2", 0.1, "value");
+                    setTimeout(done, 150);
+                });
+
                 it("should delete key after timeout", (done) => {
                     commands.setex("tmpkey", 0.1, "value", (err, result) => {
                         assert.equal(result, "OK");

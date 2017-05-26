@@ -15,18 +15,22 @@ export class Store {
         let msg = this._buildMessage(cmd, ...args);
 
         // callback when the worker receives back the final result
-        this.$callbacks[msg.messageId] = callback;
+        if (callback) {
+            this.$callbacks[msg.messageId] = callback;
+        }
 
         // send command to be executed by the master node
         process.send(msg);
     }
 
     consume (message: Message) {
-        // dispatch callback
-        this.$callbacks[ message.messageId ]( message.error, message.result );
+        if (this.$callbacks[ message.messageId ]) {
+            // dispatch callback
+            this.$callbacks[ message.messageId ]( message.error, message.result );
 
-        // cleanup
-        delete this.$callbacks[ message.messageId ];
+            // cleanup
+            delete this.$callbacks[ message.messageId ];
+        }
     }
 
     private _buildMessage(command: string, ...args: any[]): Message {
