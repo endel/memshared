@@ -715,7 +715,7 @@ describe("memshared", () => {
                     });
                 });
 
-                it("should not insert element because list does not exist"), (done) => {
+                it("should not insert new element because list does not exist", (done) => {
                   commands.lpushx("random_key_name123", 0, (err, result) => {
                       assert.equal(result, 0);
 
@@ -724,7 +724,7 @@ describe("memshared", () => {
                           done();
                       });
                   });
-                }
+                });
 
             });
 
