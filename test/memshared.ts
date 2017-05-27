@@ -701,6 +701,18 @@ describe("memshared", () => {
                         });
                     });
                 });
+
+                it("should create new list and insert new element at the beginning of list ", (done) => {
+                    commands.lpush("list_pop_create_new", 0, (err, result) => {
+                        assert.equal(result, 1);
+
+                        commands.lrange("list_pop_create_new", 0, 1, (err, result) => {
+                            assert.deepEqual(result, [0]);
+                            done();
+                        });
+                    });
+                });
+
             });
 
             describe("#lpushx", () => {
@@ -717,14 +729,11 @@ describe("memshared", () => {
 
                 it("should not insert new element because list does not exist", (done) => {
                   commands.lpushx("random_key_name123", 0, (err, result) => {
-                      assert.equal(result, 0);
-
-                      commands.lrange("random_key_name123", 0, 1, (err, result) => {
-                          assert.deepEqual(result, []);
-                          done();
+                      assert.equal(result, undefined);
+                      assert.equal(err, "key does not exist");
+                      done();
                       });
                   });
-                });
 
             });
 
