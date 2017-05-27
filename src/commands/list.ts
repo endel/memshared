@@ -79,7 +79,10 @@ export function lpush (key: string, value: any, callback: Callback<number>) {
         store.dispatch("lpush", callback, key, value);
 
     } else {
-        return store[key].unshift(value);
+        if (!(key in store)) {
+          store[key] = [];
+        }
+        return lpushx(key, value, undefined);
     }
 }
 
@@ -87,7 +90,20 @@ export function lpush (key: string, value: any, callback: Callback<number>) {
  * LPUSHX key value
  * Prepend a value to a list, only if the list exists
  */
-export function lpushx () {
+export function lpushx (key: string, value: any, callback: Callback<number>) {
+  if (!isMasterNode()) {
+    store.dispatch("lpushx", callback, key, value);
+  } else {
+    try {
+      return store[key].unshift(value);
+    }
+    catch (e) {
+      if (!(key in store)) {
+          throw new Error("key does not exist");
+      }
+      throw new Error("key is not a list");
+    };
+  }
 }
 
 /*
@@ -99,7 +115,10 @@ export function lrange (key: string, start: number, stop: number, callback: Arra
         store.dispatch("lrange", callback, key, start, stop);
 
     } else {
-        let list = (store[key] || []);
+        if (!(key in store)){
+          return [];
+        }
+        let list = store[key]
         if (stop === -1) {
             stop = list.length;
         }
@@ -185,5 +204,14 @@ export function rpush (key: string, value: any, callback: Callback<number>) {
  * RPUSHX key value
  * Append a value to a list, only if the list exists
  */
-export function rpushx () {
+export function rpushx (key: string, value: any, callback: Callback<number>) {
+  if (!isMasterNode()) {
+    store.dispatch("rpushx", callback, key, value);
+  } else {
+    if (!(key in store)) {
+      return 0;
+    }
+    rpush(key, value, undefined);
+    return llen(key, undefined);
+  }
 }

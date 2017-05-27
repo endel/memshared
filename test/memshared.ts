@@ -29,6 +29,7 @@ describe("memshared", () => {
                 list_pop_4: [ 1, 2, 3, 4, 5, 6, 7, 8, 9 ],
                 list_pop_5: [ 1, 2, 3, 4, 5, 6, 7, 8, 9 ],
                 list_pop_6: [ 1, 2, 3, 4, 5, 6, 7, 8, 9 ],
+                list_pop_7: [ 1, 2, 3, 4, 5, 6, 7, 8, 9 ],
                 set: new Set([ 9, 8, 7, 6, 5, 4, 3, 2, 1 ]),
                 set_pop: new Set([ 9, 8, 7, 6, 5, 4, 3, 2, 1 ]),
                 set_pop2: new Set([ 9, 8, 7, 6, 5, 4, 3, 2, 1 ]),
@@ -700,6 +701,40 @@ describe("memshared", () => {
                         });
                     });
                 });
+
+                it("should create new list and insert new element at the beginning of list ", (done) => {
+                    commands.lpush("list_pop_create_new", 0, (err, result) => {
+                        assert.equal(result, 1);
+
+                        commands.lrange("list_pop_create_new", 0, 1, (err, result) => {
+                            assert.deepEqual(result, [0]);
+                            done();
+                        });
+                    });
+                });
+
+            });
+
+            describe("#lpushx", () => {
+                it("should insert new element at the beginning of list ", (done) => {
+                    commands.lpushx("list_pop_7", 0, (err, result) => {
+                        assert.equal(result, 10);
+
+                        commands.lrange("list_pop_7", 0, 1, (err, result) => {
+                            assert.deepEqual(result, [0]);
+                            done();
+                        });
+                    });
+                });
+
+                it("should not insert new element because list does not exist", (done) => {
+                  commands.lpushx("random_key_name123", 0, (err, result) => {
+                      assert.equal(result, undefined);
+                      assert.equal(err, "key does not exist");
+                      done();
+                      });
+                  });
+
             });
 
 
