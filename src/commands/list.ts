@@ -87,7 +87,16 @@ export function lpush (key: string, value: any, callback: Callback<number>) {
  * LPUSHX key value
  * Prepend a value to a list, only if the list exists
  */
-export function lpushx () {
+export function lpushx (key: string, value: any, callback: Callback<number>) {
+  if (!isMasterNode()) {
+    store.dispatch("lpushx", callback, key, value);
+  } else {
+    if (!(key in store)) {
+      return 0;
+    }
+    lpush(key, value, undefined);
+    return llen(key, undefined);
+  }
 }
 
 /*
