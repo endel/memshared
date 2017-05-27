@@ -108,7 +108,10 @@ export function lrange (key: string, start: number, stop: number, callback: Arra
         store.dispatch("lrange", callback, key, start, stop);
 
     } else {
-        let list = (store[key] || []);
+        if (!(key in store)){
+          return [];
+        }
+        let list = store[key]
         if (stop === -1) {
             stop = list.length;
         }
