@@ -5,7 +5,7 @@ import { ArrayCallback, Callback } from "../callbacks";
  * DEL key [key ...]
  * Delete a key
  */
-export function del (key: string, callback: Callback<string>) {
+export function del (key: string, callback?: Callback<string>) {
     if (!isMasterNode()) {
         store.dispatch("del", callback, key);
 
