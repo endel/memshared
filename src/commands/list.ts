@@ -1,6 +1,12 @@
 import { store, isMasterNode } from "../";
 import { ArrayCallback, Callback } from "../callbacks";
 
+function _ensureList(key) {
+  if (!(key in store)) {
+    store[key] = [];
+  }
+}
+
 /*
  * BLPOP key [key ...] timeout
  * Remove and get the first element in a list, or block until one is available
@@ -79,9 +85,7 @@ export function lpush (key: string, value: any, callback: Callback<number>) {
         store.dispatch("lpush", callback, key, value);
 
     } else {
-        if (!(key in store)) {
-          store[key] = [];
-        }
+        _ensureList(key);
         return lpushx(key, value, undefined);
     }
 }
@@ -196,7 +200,8 @@ export function rpush (key: string, value: any, callback: Callback<number>) {
         store.dispatch("rpush", callback, key, value);
 
     } else {
-        return store[key].push(value);
+        _ensureList(key);
+        return rpushx(key, value, undefined);
     }
 }
 
@@ -208,10 +213,14 @@ export function rpushx (key: string, value: any, callback: Callback<number>) {
   if (!isMasterNode()) {
     store.dispatch("rpushx", callback, key, value);
   } else {
-    if (!(key in store)) {
-      return 0;
+    try {
+      return store[key].push(value);
     }
-    rpush(key, value, undefined);
-    return llen(key, undefined);
+    catch (e) {
+      if (!(key in store)) {
+          throw new Error("key does not exist");
+      }
+      throw new Error("key is not a list");
+    };
   }
 }
