@@ -1,6 +1,6 @@
 {
   "name": "memshared",
-  "version": "0.9.12",
+  "version": "0.9.14",
   "description": "Redis-like in-memory database for NodeJS clustered applications",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",

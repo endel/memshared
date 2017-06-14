@@ -68,7 +68,7 @@ export function bitpos () {
  * DECR key
  * Decrement the integer value of a key by one
  */
-export function decr (key: string, callback: Callback<number>) {
+export function decr (key: string, callback?: Callback<number>) {
     if (!isMasterNode()) {
         store.dispatch("decr", callback, key);
 
@@ -84,7 +84,7 @@ export function decr (key: string, callback: Callback<number>) {
  * DECRBY key decrement
  * Decrement the integer value of a key by the given number
  */
-export function decrby (key: string, value: number, callback: Callback<number>) {
+export function decrby (key: string, value: number, callback?: Callback<number>) {
     if (!isMasterNode()) {
         store.dispatch("decrby", callback, key, value);
 
@@ -122,7 +122,7 @@ export function getset () {
  * INCR key
  * Increment the integer value of a key by one
  */
-export function incr (key: string, callback: Callback<number>) {
+export function incr (key: string, callback?: Callback<number>) {
     if (!isMasterNode()) {
         store.dispatch("incr", callback, key);
 
@@ -138,7 +138,7 @@ export function incr (key: string, callback: Callback<number>) {
  * INCRBY key increment
  * Increment the integer value of a key by the given amount
  */
-export function incrby (key: string, value: number, callback: Callback<number>) {
+export function incrby (key: string, value: number, callback?: Callback<number>) {
     if (!isMasterNode()) {
         store.dispatch("incrby", callback, key, value);
 
