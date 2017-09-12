@@ -4,6 +4,7 @@ import * as commands from "./commands";
 import { Store, Message } from "./Store";
 import { ChildProcess } from "child_process";
 
+export { Store } // export type
 export const store = new Store();
 
 let processesById: {[processId: number]: ChildProcess} = {};
