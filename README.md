@@ -1,3 +1,7 @@
+<a target='_blank' rel='nofollow' href='https://app.codesponsor.io/link/Pa34TYK6ySj3zGr7u124Dgnn/endel/memshared'>
+  <img alt='Sponsor' width='888' height='68' src='https://app.codesponsor.io/embed/Pa34TYK6ySj3zGr7u124Dgnn/endel/memshared.svg' />
+</a>
+
 # memshared
 
 [![Build Status](https://secure.travis-ci.org/endel/memshared.png?branch=master)](http://travis-ci.org/endel/memshared)
