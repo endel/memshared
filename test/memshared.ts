@@ -761,6 +761,23 @@ describe("memshared", () => {
 
         });
 
+        //
+        // PUB/SUB
+        //
+        describe("pub/sub", () => {
+            describe("#subscribe", () => {
+                it("should allow subscribing to a topic", (done) => {
+                    commands.subscribe("channel_name", (data) => {
+                        console.log("WORKER RECEIVED DATA!", data);
+                        assert.equal(data, "some data");
+                        done();
+                    });
+
+                    commands.publish("channel_name", "some data");
+                });
+            });
+        });
+
     }
 
 });

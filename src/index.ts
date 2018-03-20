@@ -28,6 +28,8 @@ function masterHandleIncomingMessage (processId: number, message: Message) {
 }
 
 function workerHandleIncomingMessage (message: Message) {
+    console.log("workerHandleIncomingMessage", message);
+
     if (!message || !commands[message.cmd]) {
         return;
     }
