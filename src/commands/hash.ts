@@ -5,7 +5,7 @@ import { ArrayCallback, Callback } from "../callbacks";
  * HDEL key field [field ...]
  * Delete one or more hash fields
  */
-export function hdel (key: string, field: string, callback: Callback<string>) {
+export function hdel (key: string, field: string, callback?: Callback<string>) {
     if (!isMasterNode()) {
         store.dispatch("hdel", callback, key, field);
 
@@ -70,7 +70,7 @@ export function hgetall (key: string, callback: ArrayCallback<any>) {
  * HINCRBY key field increment
  * Increment the integer value of a hash field by the given number
  */
-export function hincrby (key: string, field: string, increment: number, callback: Callback<number>) {
+export function hincrby (key: string, field: string, increment: number, callback?: Callback<number>) {
     if (!isMasterNode()) {
         store.dispatch("hincrby", callback, key, field, increment);
 
