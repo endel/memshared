@@ -98,7 +98,9 @@ export function setupPM2LaunchBus (mod: any) {
             let message = packet.data;
             let processId = packet.process.pm_id;
 
-            processMasterMessage(message);
+            if (!processMasterMessage(message)) {
+                return;
+            }
 
             pm2.sendDataToProcessId({
                 type: 'memshared',
@@ -106,9 +108,7 @@ export function setupPM2LaunchBus (mod: any) {
                 id: processId,
                 topic: 'memshared'
             }, function (err, res) {
-                if (err) {
-                    console.error("memshared: couldn't send message to worker.");
-                }
+                if (err) console.error("memshared: couldn't send message to worker.");
             });
         });
     });

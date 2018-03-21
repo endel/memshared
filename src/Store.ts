@@ -44,9 +44,7 @@ export class Store {
             this.$callbacks[ message.messageId ]( message.error, message.result );
 
             // cleanup
-            if (!message.pubsub) {
-                delete this.$callbacks[message.messageId];
-            }
+            delete this.$callbacks[message.messageId];
         }
     }
 

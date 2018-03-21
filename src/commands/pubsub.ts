@@ -4,15 +4,6 @@ import { ArrayCallback, Callback } from "../callbacks";
 const subscriptions: {[topic: string]: Function[]} = {};
 const masterSubscriptions: {[topic: string]: number[]} = {};
 
-export function pubsub (topic: string, callback: Function) {
-    if (!isMasterNode()) {
-        store.dispatch("pubsub", callback, topic);
-
-    } else {
-        return masterSubscriptions[topic];
-    }
-}
-
 /*
  * SUBSCRIBE
  * Subscribe to one channel, with the provided callback
@@ -100,9 +91,7 @@ export function publish (topic: string, message: any, isDispatching: boolean = t
                         id: processId,
                         topic: 'memshared'
                     }, function (err, res) {
-                        if (err) {
-                            console.error("memshared: couldn't send message to worker.");
-                        }
+                        if (err) return console.error("memshared: couldn't send message to worker.");
                     });
 
                 } else {
@@ -112,3 +101,17 @@ export function publish (topic: string, message: any, isDispatching: boolean = t
         }
     }
 }
+
+/*
+ * PUBSUB channel
+ * List the processes subscribing to this topic.
+ */
+export function pubsub (topic: string, callback: Function) {
+    if (!isMasterNode()) {
+        store.dispatch("pubsub", callback, topic);
+
+    } else {
+        return masterSubscriptions[topic];
+    }
+}
+
