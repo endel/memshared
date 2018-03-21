@@ -57,6 +57,10 @@ export function isMasterNode () {
     return (!process.send);
 }
 
+export function getProcessId () {
+    return process.env.pm_id || process.pid;
+}
+
 export function getProcessById(processId: number): ChildProcess {
     return processesById[ processId ];
 }
@@ -83,7 +87,10 @@ export function processMasterMessage (message: Message): boolean {
     delete message['args'];
 }
 
-export function setupPM2LaunchBus (pm2: any) {
+export let pm2: any;
+export function setupPM2LaunchBus (mod: any) {
+    pm2 = mod;
+
     pm2.launchBus(function (err, bus) {
         bus.on('memshared', function (packet) {
             let message = packet.data;

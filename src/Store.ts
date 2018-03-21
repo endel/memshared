@@ -1,3 +1,5 @@
+import { getProcessId } from "./";
+
 export interface Message {
     cmd: string,
     args?: any[],
@@ -50,7 +52,7 @@ export class Store {
 
     buildMessage(command: string, ...args: any[]): Message {
         return {
-            messageId: `${ process.pid }:${ messageId++ }`,
+            messageId: `${ getProcessId() }:${ messageId++ }`,
             cmd: command,
             args: args
         }

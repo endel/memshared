@@ -1,4 +1,4 @@
-import { store, isMasterNode, getProcessById } from "../";
+import { store, isMasterNode, pm2, getProcessById, getProcessId } from "../";
 import { ArrayCallback, Callback } from "../callbacks";
 
 const subscriptions: {[topic: string]: Function[]} = {};
@@ -14,7 +14,7 @@ export function subscribe (topic: string, callback: Function) {
 
         subscriptions[topic].push(callback);
 
-        store.dispatch("subscribe", undefined, topic, process.pid);
+        store.dispatch("subscribe", undefined, topic, getProcessId());
 
     } else {
         if (!masterSubscriptions[topic]) { masterSubscriptions[topic] = []; }
@@ -44,7 +44,7 @@ export function unsubscribe (topic: string, callback?: Function) {
             }
         }
 
-        store.dispatch("unsubscribe", undefined, topic, hasCallback, process.pid);
+        store.dispatch("unsubscribe", undefined, topic, hasCallback, getProcessId());
 
     } else {
         const hasCallback: boolean = <any>callback;
@@ -68,7 +68,6 @@ export function unsubscribe (topic: string, callback?: Function) {
  */
 export function publish (topic: string, message: any, isDispatching: boolean = true) {
     if (!isMasterNode()) {
-        console.log("WORKER RECEIVED 'publish'");
         if (isDispatching) {
             store.dispatch("publish", undefined, topic, message);
 
@@ -77,17 +76,29 @@ export function publish (topic: string, message: any, isDispatching: boolean = t
         }
 
     } else {
-        console.log("MASTER RECEIVED 'publish'");
         if (masterSubscriptions[topic]) {
             masterSubscriptions[topic].forEach(processId => {
-                console.log("LETS PUBLISH", processId);
-                const worker = getProcessById(processId);
-                console.log("WORKER:", worker);
-                worker.send({
+                const data = {
                     cmd: "publish",
                     args: [topic, message, false],
                     pubsub: true
-                });
+                };
+
+                if (pm2) {
+                    pm2.sendDataToProcessId({
+                        type: 'memshared',
+                        data: data,
+                        id: processId,
+                        topic: 'memshared'
+                    }, function (err, res) {
+                        if (err) {
+                            console.error("memshared: couldn't send message to worker.");
+                        }
+                    });
+
+                } else {
+                    getProcessById(processId).send(data);
+                }
             });
         }
     }
