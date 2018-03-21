@@ -7,67 +7,89 @@ interface ProcessSubscription {
 };
 
 const subscriptions: {[topic: string]: Function[]} = {};
-const masterSubscriptions: {[topic: string]: ProcessSubscription[]} = {};
+const masterSubscriptions: {[topic: string]: number[]} = {};
 
 /*
- * HDEL key field [field ...]
- * Delete one or more hash fields
+ * SUBSCRIBE
+ * Subscribe to one channel, with the provided callback
  */
-export function subscribe (topic: string, callback: Function, processId?: number) {
+export function subscribe (topic: string, callback: Function) {
     if (!isMasterNode()) {
-        if (!subscriptions[topic]) {
-            subscriptions[topic] = [];
-        }
-        store.dispatch("subscribe", callback, topic, undefined, process.pid);
+        if (!subscriptions[topic]) { subscriptions[topic] = []; }
+
+        subscriptions[topic].push(callback);
+
+        store.dispatch("subscribe", undefined, topic, process.pid);
 
     } else {
-        console.log("MASTER IS SUBSCRIBING TO", topic);
-        if (!masterSubscriptions[topic]) {
-            masterSubscriptions[topic] = [];
-        }
+        if (!masterSubscriptions[topic]) { masterSubscriptions[topic] = []; }
 
-        masterSubscriptions[topic].push({
-            pid: processId,
-            callback: (message) => store.dispatch("perform_publish", undefined, topic, message)
-        });
-    }
-}
-
-export function perform_publish (topic, message) {
-    if (!isMasterNode()) {
-        console.log("WORKER: PERFORM PUBLISH!");
-        subscriptions[topic].forEach(f => f(message));
-
-    } else {
-        console.log("MASTER: PERFORM PUBLISH!");
+        // "callback" is actually the process id here.
+        masterSubscriptions[topic].push(<any>callback);
     }
 }
 
 /*
- * HDEL key field [field ...]
- * Delete one or more hash fields
+ * UNSUBSCRIBE
+ * Unsubscribe from one channel. Callback is optional.
  */
-export function publish (topic: string, message: any) {
+export function unsubscribe (topic: string, callback?: Function) {
     if (!isMasterNode()) {
-        store.dispatch("publish", undefined, topic, message);
+        let hasCallback = (callback !== undefined);
+
+        if (subscriptions[topic]) {
+            if (hasCallback) {
+                let index = subscriptions[topic].indexOf(callback);
+                if (index !== -1) {
+                    subscriptions[topic].splice(index, 1);
+                }
+
+            } else {
+                delete subscriptions[topic];
+            }
+        }
+
+        store.dispatch("unsubscribe", undefined, topic, hasCallback, process.pid);
 
     } else {
-        console.log("MASTER WILL PUBLISH ON", topic, message);
+        const hasCallback: boolean = <any>callback;
+        const processId = arguments[2];
 
+        if (hasCallback) {
+            let index = masterSubscriptions[topic].indexOf(processId);
+            if (index !== -1) {
+                masterSubscriptions[topic].splice(index, 1);
+            }
+
+        } else {
+            delete masterSubscriptions[topic];
+        }
+    }
+}
+
+/*
+ * PUBLISH channel message
+ * Publish a message to an specific channel
+ */
+export function publish (topic: string, message: any, isDispatching: boolean = true) {
+    if (!isMasterNode()) {
+        if (isDispatching) {
+            store.dispatch("publish", undefined, topic, message);
+
+        } else {
+            subscriptions[topic].forEach(c => c(message));
+        }
+
+    } else {
         if (masterSubscriptions[topic]) {
-            masterSubscriptions[topic].forEach(subscription => {
-                const worker = getProcessById(subscription.pid);
-
+            masterSubscriptions[topic].forEach(processId => {
+                const worker = getProcessById(processId);
                 worker.send({
-                    messageId: null,
-                    cmd: "perform_publish",
-                    args: [topic, message],
+                    cmd: "publish",
+                    args: [topic, message, false],
                     pubsub: true
                 });
             });
-
-        } else {
-            console.warn(`No subscribers for topic: ${topic}`);
         }
     }
 }

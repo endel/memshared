@@ -28,13 +28,16 @@ function masterHandleIncomingMessage (processId: number, message: Message) {
 }
 
 function workerHandleIncomingMessage (message: Message) {
-    console.log("workerHandleIncomingMessage", message);
-
     if (!message || !commands[message.cmd]) {
         return;
     }
 
-    store.consume(message);
+    if (message.messageId) {
+        store.consume(message);
+
+    } else if (message.pubsub) {
+        commands[message.cmd].apply(undefined, message.args);
+    }
 }
 
 if (isMasterNode()) {

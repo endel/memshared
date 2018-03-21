@@ -1,7 +1,7 @@
 export interface Message {
-    messageId: string,
     cmd: string,
     args?: any[],
+    messageId?: string,
     result?: any,
     error?: any,
     pubsub?: boolean
@@ -31,21 +31,15 @@ export class Store {
             this.$callbacks[ message.messageId ]( message.error, message.result );
 
             // cleanup
-            delete this.$callbacks[ message.messageId ];
-
-        } else if (message.pubsub) {
-
-            console.log("CONSUME, PUBSUB:", message);
+            if (!message.pubsub) {
+                delete this.$callbacks[message.messageId];
+            }
         }
-    }
-
-    getMessageId () {
-        return `${ process.pid }:${ messageId++ }`;
     }
 
     buildMessage(command: string, ...args: any[]): Message {
         return {
-            messageId: this.getMessageId(),
+            messageId: `${ process.pid }:${ messageId++ }`,
             cmd: command,
             args: args
         }

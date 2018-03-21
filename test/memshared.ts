@@ -7,7 +7,10 @@ import { setup } from "../src/index";
 describe("memshared", () => {
 
     if (cluster.isMaster) {
-        let worker = cluster.fork();
+        let workers = [
+            cluster.fork(),
+            // cluster.fork(),
+        ];
 
         it("should set up with initial data", () => {
             setup({
@@ -37,7 +40,17 @@ describe("memshared", () => {
         });
 
         it("all tests", (done) => {
-            worker.on("exit", () => done());
+            let finished: number = 0;
+
+            workers.forEach(worker => {
+                worker.on("exit", () => {
+                    finished++;
+
+                    if (finished === workers.length) {
+                        done();
+                    }
+                });
+            });
         }).timeout(5000);;
 
     } else {
@@ -768,12 +781,57 @@ describe("memshared", () => {
             describe("#subscribe", () => {
                 it("should allow subscribing to a topic", (done) => {
                     commands.subscribe("channel_name", (data) => {
-                        console.log("WORKER RECEIVED DATA!", data);
                         assert.equal(data, "some data");
                         done();
                     });
 
                     commands.publish("channel_name", "some data");
+                });
+            });
+
+            describe("#unsubscribe", () => {
+                it("should unsubscribe by topic", (done) => {
+                    commands.subscribe("channel_to_unsubscribe", (data) => {
+                        throw new Error("This callback should never be called.");
+                    });
+
+                    commands.unsubscribe("channel_to_unsubscribe")
+
+                    commands.publish("channel_to_unsubscribe", "some data");
+
+                    setTimeout(done, 10);
+                });
+
+                it("should unsubscribe by callback", (done) => {
+                    let callback = (data) => {
+                        throw new Error("This callback should never be called.");
+                    };
+                    commands.subscribe("channel_to_unsubscribe_2", callback);
+                    commands.subscribe("channel_to_unsubscribe_2", (data) => {
+                        assert.deepEqual(data, "some data");
+                        setTimeout(done, 10);
+                    });
+                    commands.unsubscribe("channel_to_unsubscribe_2", callback);
+                    commands.publish("channel_to_unsubscribe_2", "some data");
+                });
+            });
+
+            describe("#publish", () => {
+                it("should allow sending complex objects", (done) => {
+                    const topic = "channel_publish";
+                    const testData = {
+                        complex: "object",
+                        here: true,
+                        list: [1,2,3,4,"str"]
+                    };
+
+                    commands.subscribe(topic, (data) => {
+                        assert.deepEqual(data, testData);
+                        commands.unsubscribe(topic);
+                        done();
+                    });
+
+                    commands.publish(topic, testData);
                 });
             });
         });
