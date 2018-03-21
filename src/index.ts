@@ -10,24 +10,18 @@ export const store = new Store();
 let processesById: {[processId: number]: ChildProcess} = {};
 
 function masterHandleIncomingMessage (processId: number, message: Message) {
-    if (!message || !commands[message.cmd]) { return; }
-
-    // run command in master
-    try {
-        message.result = commands[message.cmd].apply(undefined, message.args);
-
-    } catch (e) {
-        message.error = e.message;
+    if (processMasterMessage(message)) {
     }
-
-    // delete irrelevant data to send back to the worker
-    delete message['args'];
 
     // send result back to worker
     processesById[ processId ].send(message);
 }
 
 function workerHandleIncomingMessage (message: Message) {
+    if ((<any>message).topic === "memshared") {
+        message = (<any>message).data;
+    }
+
     if (!message || !commands[message.cmd]) {
         return;
     }
@@ -69,6 +63,45 @@ export function getProcessById(processId: number): ChildProcess {
 export function registerProcess (childProcess: ChildProcess) {
     processesById[ childProcess.pid ] = childProcess;
     childProcess.on("message", (message: Message) => masterHandleIncomingMessage(childProcess.pid, message));
+}
+
+export function processMasterMessage (message: Message): boolean {
+    if (!message || !commands[message.cmd]) {
+        return false;
+    }
+
+    // run command on master process
+    try {
+        message.result = commands[message.cmd].apply(undefined, message.args);
+
+    } catch (e) {
+        message.error = e.message;
+    }
+
+    // delete irrelevant data to send back to the worker
+    delete message['args'];
+}
+
+export function setupPM2LaunchBus (pm2: any) {
+    pm2.launchBus(function (err, bus) {
+        bus.on('memshared', function (packet) {
+            let message = packet.data;
+            let processId = packet.process.pm_id;
+
+            processMasterMessage(message);
+
+            pm2.sendDataToProcessId({
+                type: 'memshared',
+                data: message,
+                id: processId,
+                topic: 'memshared'
+            }, function (err, res) {
+                if (err) {
+                    console.error("memshared: couldn't send message to worker.");
+                }
+            });
+        });
+    });
 }
 
 export function setup (data: any) {

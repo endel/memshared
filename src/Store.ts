@@ -20,8 +20,19 @@ export class Store {
             this.$callbacks[msg.messageId] = callback;
         }
 
-        // send command to be executed by the master node
-        process.send(msg);
+        if (process.env.pm_id === undefined) {
+            // send command to be executed by the master node
+            process.send(msg);
+
+        } else {
+            // PM2: send command to PM2's launchBus
+            // (http://pm2.keymetrics.io/docs/usage/pm2-api/#send-message-to-process)
+            process.send({
+                type: "memshared",
+                topic: "memshared",
+                data: msg,
+            });
+        }
     }
 
     consume (message: Message) {

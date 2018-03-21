@@ -1,11 +1,6 @@
 import { store, isMasterNode, getProcessById } from "../";
 import { ArrayCallback, Callback } from "../callbacks";
 
-interface ProcessSubscription {
-    pid: number,
-    callback: Function
-};
-
 const subscriptions: {[topic: string]: Function[]} = {};
 const masterSubscriptions: {[topic: string]: number[]} = {};
 
@@ -73,6 +68,7 @@ export function unsubscribe (topic: string, callback?: Function) {
  */
 export function publish (topic: string, message: any, isDispatching: boolean = true) {
     if (!isMasterNode()) {
+        console.log("WORKER RECEIVED 'publish'");
         if (isDispatching) {
             store.dispatch("publish", undefined, topic, message);
 
@@ -81,9 +77,12 @@ export function publish (topic: string, message: any, isDispatching: boolean = t
         }
 
     } else {
+        console.log("MASTER RECEIVED 'publish'");
         if (masterSubscriptions[topic]) {
             masterSubscriptions[topic].forEach(processId => {
+                console.log("LETS PUBLISH", processId);
                 const worker = getProcessById(processId);
+                console.log("WORKER:", worker);
                 worker.send({
                     cmd: "publish",
                     args: [topic, message, false],

@@ -19,5 +19,8 @@
     "mocha": "^3.3.0",
     "ts-node": "^3.0.2",
     "typescript": "^2.3.2"
+  },
+  "optionalDependencies": {
+    "pm2": "^2.10.1"
   }
 }
