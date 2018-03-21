@@ -10,7 +10,8 @@ export const store = new Store();
 let processesById: {[processId: number]: ChildProcess} = {};
 
 function masterHandleIncomingMessage (processId: number, message: Message) {
-    if (processMasterMessage(message)) {
+    if (!processMasterMessage(message)) {
+        return;
     }
 
     // send result back to worker
