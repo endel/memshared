@@ -85,6 +85,8 @@ export function processMasterMessage (message: Message): boolean {
 
     // delete irrelevant data to send back to the worker
     delete message['args'];
+
+    return true;
 }
 
 export let pm2: any;
