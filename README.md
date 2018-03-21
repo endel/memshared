@@ -39,6 +39,14 @@ if (cluster.isMaster) {
 }
 ```
 
+## Usage with PM2
+
+You'll need a script to start PM2. See [this example](pm2/pm2.js).
+
+```
+node pm2/pm2.js
+```
+
 ## Missing commands
 
 There are a lot of commands missing. Feel free to pick one of them and send a
