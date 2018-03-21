@@ -834,6 +834,19 @@ describe("memshared", () => {
                     commands.publish(topic, testData);
                 });
             });
+
+            describe("#pubsub", () => {
+                it("should list processes listening to a topic", (done) => {
+                    const topic = "tmp_pubsub_topic";
+                    commands.subscribe(topic, (data) => {});
+                    commands.subscribe(topic, (data) => {});
+
+                    commands.pubsub(topic, (err, result) => {
+                        assert.equal(result.length, 2);
+                        done();
+                    });
+                });
+            });
         });
 
     }
