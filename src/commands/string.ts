@@ -203,6 +203,7 @@ export function setbit () {
  * SETEX key seconds value
  * Set the value and expiration of a key
  */
+let timeouts: {[key: string]: NodeJS.Timer} = {};
 export function setex (key: string, seconds: number, value: any, callback?: Callback<string>) {
     if (!isMasterNode()) {
         store.dispatch("setex", callback, key, seconds, value);
@@ -210,8 +211,16 @@ export function setex (key: string, seconds: number, value: any, callback?: Call
     } else {
         set(key, value, undefined);
 
+        // ensure previous timeout is cleared before setting a new one
+        if (timeouts[key]) {
+            clearTimeout(timeouts[key]);
+        }
+
         // enqueue to delete after timeout in seconds.
-        setTimeout(del, seconds * 1000, key);
+        timeouts[key] = setTimeout(() => {
+            del(key);
+            delete timeouts[key];
+        }, seconds * 1000);
 
         return "OK";
     }
