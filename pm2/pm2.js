@@ -17,5 +17,10 @@ pm2.connect(function (err) {
         max_memory_restart: '100M'  // Optional: Restarts your app if it reaches 100Mo
     }, function (err, apps) {
         if (err) throw err
+
+        //
+
+        pm2.disconnect();
+        process.exit(0);
     });
 });
