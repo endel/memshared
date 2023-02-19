@@ -54,7 +54,7 @@ if (isMasterNode()) {
 }
 
 export function isMasterNode () {
-    return (!process.send);
+    return (cluster.isMaster);
 }
 
 export function getProcessId () {
